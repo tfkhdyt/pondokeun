@@ -4,6 +4,10 @@
 	export let data: PageServerData;
 </script>
 
+<svelte:head>
+  <title>{data.message ? '404 Not Found' : 'Redirecting...'}</title>
+</svelte:head>
+
 <main>
 	{#if data.message}
 		<h1>404</h1>
