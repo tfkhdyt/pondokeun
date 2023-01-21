@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { env } from '$env/dynamic/public';
+	import { fade } from 'svelte/transition';
 	import type { ActionData } from './$types';
 
 	export let form: ActionData;
 	let isCopied = false;
+
+	const appUrl = env.PUBLIC_APP_URL;
 </script>
 
 <svelte:head>
@@ -28,11 +32,11 @@
 					name="link"
 					placeholder="Enter the link here"
 					required
-					class="p-4 w-full rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white sm:text-sm focus:border-yellow-600 focus:ring-yellow-600 w-4/6 dark:text-gray-300"
+					class="p-4 w-full rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white sm:text-sm focus:border-yellow-600 focus:ring-yellow-600 w-4/6 dark:text-gray-300 transition duration-500 ease-in-out"
 				/>
 
 				<button
-					class="inline-block rounded bg-yellow-600 py-3 text-sm font-medium text-white transition hover:shadow-xl focus:outline-none focus:ring active:bg-yellow-700 w-2/6 active:ring-0"
+					class="inline-block rounded bg-yellow-500 hover:bg-red-500 py-3 text-sm font-medium text-white transition duration-500 ease-in-out focus:outline-none focus:ring active:bg-yellow-700 w-2/6 active:ring-0"
 				>
 					Shorten
 				</button>
@@ -43,19 +47,23 @@
 			<div
 				role="alert"
 				class="mt-4 rounded border-l-4 border-green-500 bg-green-50 dark:border-green-700 dark:bg-green-900 p-4"
+				transition:fade
 			>
 				<strong class="block font-medium text-green-700 dark:text-white"
 					>Here's your shortened link!</strong
 				>
 
 				<p class="mt-2 text-sm text-green-700 dark:text-white">
-					<a href="http://localhost:5173/{form?.addedLink?.slug}" class="underline"
-						>http://localhost:5173/{form?.addedLink?.slug}</a
+					<a
+						href="{appUrl}/{form?.addedLink?.slug}"
+						class="underline"
+						target="_blank"
+						rel="noreferrer">{appUrl}/{form?.addedLink?.slug}</a
 					>
 					<button
 						class="bg-gray-200 text-gray-800 px-2 py-1 ml-2 dark:bg-gray-800 dark:text-white rounded"
 						on:click={() => {
-							navigator.clipboard.writeText(`http://localhost:5173/${form?.addedLink?.slug}`);
+							navigator.clipboard.writeText(`${appUrl}/${form?.addedLink?.slug}`);
 							isCopied = true;
 						}}>{isCopied ? 'Copied!' : 'Copy link'}</button
 					>
