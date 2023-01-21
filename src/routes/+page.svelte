@@ -21,20 +21,22 @@
 		>
 			Pondokeun
 		</h1>
-		<form method="POST" use:enhance class="space-y-4">
-			<input
-				type="url"
-				name="link"
-				placeholder="Enter the link here"
-				required
-				class="p-4 w-full rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white sm:text-sm"
-			/>
+		<form method="POST" use:enhance>
+			<div class="flex space-x-2">
+				<input
+					type="url"
+					name="link"
+					placeholder="Enter the link here"
+					required
+					class="p-4 w-full rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white sm:text-sm focus:border-yellow-600 focus:ring-yellow-600 w-4/6 dark:text-gray-300"
+				/>
 
-			<button
-				class="inline-block rounded bg-yellow-600 px-8 py-3 text-sm font-medium text-white transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-yellow-700"
-			>
-				Shorten
-			</button>
+				<button
+					class="inline-block rounded bg-yellow-600 py-3 text-sm font-medium text-white transition hover:shadow-xl focus:outline-none focus:ring active:bg-yellow-700 w-2/6 active:ring-0"
+				>
+					Shorten
+				</button>
+			</div>
 		</form>
 
 		{#if form?.status === 'success'}
