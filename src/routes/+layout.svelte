@@ -1,16 +1,14 @@
 <script>
 </script>
 
-<main class="container">
-	<slot />
+<main class="grid place-items-center min-h-screen">
+	<div>
+		<slot />
+	</div>
 </main>
 
-<style>
-	:root {
-		--font-size: 0.98rem;
-	}
-
-	main {
-		padding: 2rem 0;
-	}
+<style global>
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
 </style>
