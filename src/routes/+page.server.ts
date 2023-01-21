@@ -1,14 +1,35 @@
 import { fail, type Actions } from '@sveltejs/kit';
+import { Prisma } from '@prisma/client';
+import { db } from '../lib/database/prisma';
 
 export const actions: Actions = {
 	default: async (event) => {
 		const data = await event.request.formData();
-		const link = data.get('link');
+		const link = data.get('link') as string;
 
 		if (!link) {
 			return fail(400, { link, missing: true });
 		}
 
-		return { link };
+		const newLink: Prisma.LinkCreateInput = {
+			slug: crypto.randomUUID().slice(0, 8),
+			link
+		};
+
+		try {
+			const addedLink = await db.link.create({
+				data: newLink
+			});
+
+			return { addedLink, status: 'success' };
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Prisma.PrismaClientKnownRequestError) {
+				return fail(500, {
+					status: 'error',
+					message: err.message
+				});
+			}
+		}
 	}
 };
