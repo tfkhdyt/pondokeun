@@ -1,5 +1,4 @@
 <script>
-	import '@picocss/pico';
 </script>
 
 <main class="container">
