@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { env } from '$env/dynamic/public';
+	import NormalButton from '$lib/components/Buttons/NormalButton.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import Header1 from '$lib/components/Headers/Header1.svelte';
-  import type { ActionData } from './$types';
-	import { fade } from 'svelte/transition';
 	import InputField from '$lib/components/InputField.svelte';
+	import type { ActionData } from './$types';
+	import { fade } from 'svelte/transition';
 
 	export let form: ActionData;
 	let isCopied = false;
@@ -23,13 +24,9 @@
 	<Header1>Pondokeun</Header1>
 	<form method="POST" use:enhance>
 		<div class="flex space-x-2">
-      <InputField placeholder='Enter the link here' name='link' type='url' />
+			<InputField placeholder="Enter the link here" name="link" type="url" />
 
-			<button
-				class="inline-block rounded bg-yellow-500 hover:bg-red-500 py-3 text-sm font-medium text-white transition duration-500 ease-in-out focus:outline-none focus:ring active:bg-yellow-700 w-2/6 active:ring-0"
-			>
-				Shorten
-			</button>
+			<NormalButton primaryColor="yellow" secondaryColor="red">Shorten</NormalButton>
 		</div>
 	</form>
 
