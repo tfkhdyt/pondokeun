@@ -2,8 +2,10 @@
 	import { enhance } from '$app/forms';
 	import { env } from '$env/dynamic/public';
 	import Card from '$lib/components/Card.svelte';
+	import Header1 from '$lib/components/Headers/Header1.svelte';
+  import type { ActionData } from './$types';
 	import { fade } from 'svelte/transition';
-	import type { ActionData } from './$types';
+	import InputField from '$lib/components/InputField.svelte';
 
 	export let form: ActionData;
 	let isCopied = false;
@@ -18,20 +20,10 @@
 <!-- svelte-ignore a11y-no-redundant-roles -->
 
 <Card>
-	<h1
-		class="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-br from-yellow-400 to-red-600 mb-8 dark:from-yellow-600 dark:to-red-800"
-	>
-		Pondokeun
-	</h1>
+	<Header1>Pondokeun</Header1>
 	<form method="POST" use:enhance>
 		<div class="flex space-x-2">
-			<input
-				type="url"
-				name="link"
-				placeholder="Enter the link here"
-				required
-				class="p-4 w-full rounded-md border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white sm:text-sm focus:border-yellow-600 focus:ring-yellow-600 w-4/6 dark:text-gray-300 transition duration-500 ease-in-out"
-			/>
+      <InputField placeholder='Enter the link here' name='link' type='url' />
 
 			<button
 				class="inline-block rounded bg-yellow-500 hover:bg-red-500 py-3 text-sm font-medium text-white transition duration-500 ease-in-out focus:outline-none focus:ring active:bg-yellow-700 w-2/6 active:ring-0"
