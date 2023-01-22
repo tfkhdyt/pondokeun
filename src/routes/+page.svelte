@@ -44,10 +44,11 @@
 					>Shorten</NormalButton
 				>
 			</div>
-			<div>
+			<div class="flex items-center space-x-2">
 				<input
 					type="checkbox"
 					id="useCustomName"
+					name="useCustomName"
 					class="rounded-md"
 					bind:checked={useCustomName}
 				/>
