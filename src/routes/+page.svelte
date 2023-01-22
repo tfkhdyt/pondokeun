@@ -1,17 +1,29 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+
 	import { env } from '$env/dynamic/public';
+
+	import Alert from '$lib/components/Alert.svelte';
 	import NormalButton from '$lib/components/Buttons/NormalButton.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import Header1 from '$lib/components/Headers/Header1.svelte';
 	import InputField from '$lib/components/InputField.svelte';
+
 	import type { ActionData } from './$types';
-	import { fade } from 'svelte/transition';
 
 	export let form: ActionData;
 	let isCopied = false;
 
 	const appUrl = env.PUBLIC_APP_URL;
+
+	async function copyText(text: string) {
+		await navigator.clipboard.writeText(text);
+		isCopied = true;
+
+		setTimeout(() => {
+			isCopied = false;
+		}, 1500);
+	}
 </script>
 
 <svelte:head>
@@ -31,15 +43,7 @@
 	</form>
 
 	{#if form?.status === 'success'}
-		<div
-			role="alert"
-			class="mt-4 rounded border-l-4 border-green-500 bg-green-50 dark:border-green-700 dark:bg-green-900 p-4"
-			transition:fade
-		>
-			<strong class="block font-medium text-green-700 dark:text-white"
-				>Here's your shortened link!</strong
-			>
-
+		<Alert title="Here's your shortened link!" color="green">
 			<p class="mt-2 text-sm text-green-700 dark:text-white">
 				<a
 					href="{appUrl}/{form?.addedLink?.slug}"
@@ -49,27 +53,16 @@
 				>
 				<button
 					class="bg-gray-200 text-gray-800 px-2 py-1 ml-2 dark:bg-gray-800 dark:text-white rounded"
-					on:click={() => {
-						navigator.clipboard.writeText(`${appUrl}/${form?.addedLink?.slug}`);
-						isCopied = true;
-					}}>{isCopied ? 'Copied!' : 'Copy link'}</button
+					on:click={() => copyText(`${appUrl}/${form?.addedLink?.slug}`)}
+					>{isCopied ? 'Copied!' : 'Copy link'}</button
 				>
 			</p>
-		</div>
+		</Alert>
 	{:else if form?.status === 'error'}
-		<div
-			role="alert"
-			class="mt-4 rounded border-l-4 border-red-500 bg-red-50 dark:border-red-700 dark:bg-red-900 p-4"
-		>
-			<strong class="block font-medium text-red-700 dark:text-white">Failed to shorten link!</strong
-			>
-
+		<Alert color="red" title="Failed to shorten link!">
 			<p class="mt-2 text-sm text-red-700 dark:text-white">
 				{form.message}
 			</p>
-		</div>
+		</Alert>
 	{/if}
 </Card>
-
-<style>
-</style>
