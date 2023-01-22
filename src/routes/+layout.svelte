@@ -1,11 +1,7 @@
 <script>
 </script>
 
-<main class="grid place-items-center min-h-screen">
-	<div>
-		<slot />
-	</div>
-</main>
+<slot />
 
 <style global>
 	@tailwind base;
