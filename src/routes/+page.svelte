@@ -13,6 +13,7 @@
 
 	export let form: ActionData;
 	let isCopied = false;
+	let useCustomName = false;
 
 	const appUrl = env.PUBLIC_APP_URL;
 
@@ -36,15 +37,30 @@
 	<Card>
 		<Header1>Pondokeun</Header1>
 		<form method="POST" use:enhance>
-			<div class="flex space-x-2">
-				<InputField placeholder="Enter the link here" name="link" type="url" />
+			<div class="flex space-x-2 mb-4">
+				<InputField placeholder="Enter the link here" name="link" type="url" customClass='w-4/6' />
 
-				<NormalButton customClass='bg-yellow-500 hover:bg-red-500 active:bg-red-700'>Shorten</NormalButton>
+				<NormalButton customClass="bg-yellow-500 hover:bg-red-500 active:bg-red-700"
+					>Shorten</NormalButton
+				>
 			</div>
+			<div>
+				<input
+					type="checkbox"
+					id="useCustomName"
+					class="rounded-md"
+					bind:checked={useCustomName}
+				/>
+				<label for="useCustomName"> Custom name </label>
+			</div>
+
+			{#if useCustomName}
+				<InputField placeholder="Enter the custom name" name="customName" type="text" customClass='mt-4 w-full' />
+			{/if}
 		</form>
 
 		{#if form?.status === 'success'}
-			<Alert title="Here's your shortened link!" status='success'>
+			<Alert title="Here's your shortened link!" status="success">
 				<p class="mt-2 text-sm text-green-700 dark:text-white">
 					<a
 						href="{appUrl}/{form?.addedLink?.slug}"
@@ -60,11 +76,21 @@
 				</p>
 			</Alert>
 		{:else if form?.status === 'error'}
-			<Alert status='error' title="Failed to shorten link!">
+			<Alert status="error" title="Failed to shorten link!">
 				<p class="mt-2 text-sm text-red-700 dark:text-white">
 					{form.message}
 				</p>
 			</Alert>
 		{/if}
+
+    <hr class="my-4" />
+
+		<p class="mb-2">Sign in for more features:</p>
+		<div class="flex space-x-2">
+			<NormalButton customClass="bg-white w-1/2 hover:bg-gray-200 text-dark">Google</NormalButton>
+			<NormalButton customClass="bg-gray-800 w-1/2 hover:bg-gray-600 text-white"
+				>GitHub</NormalButton
+			>
+		</div>
 	</Card>
 </main>
