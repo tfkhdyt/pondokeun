@@ -1,10 +1,9 @@
 <script lang="ts">
-  export let primaryColor: string;
-  export let secondaryColor: string;
+  export let customClass: string;
 </script>
 
 <button
-	class="inline-block rounded bg-{primaryColor}-500 hover:bg-{secondaryColor}-500 py-3 text-sm font-medium text-white transition duration-500 ease-in-out focus:outline-none focus:ring active:bg-{secondaryColor}-700 w-2/6 active:ring-0"
+	class="inline-block rounded py-3 text-sm font-medium text-white transition duration-500 ease-in-out focus:outline-none focus:ring w-2/6 active:ring-0 {customClass}"
 >
   <slot />
 </button>
