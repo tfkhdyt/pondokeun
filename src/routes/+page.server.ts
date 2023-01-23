@@ -1,6 +1,20 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import { Prisma } from '@prisma/client';
 import { db } from '../lib/database/prisma';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async (event) => {
+	const session = await event.locals.getSession();
+	const links = await db.link.findMany({
+		where: {
+			user: {
+				email: session?.user?.email
+			}
+		}
+	});
+
+	return { links };
+};
 
 export const actions: Actions = {
 	default: async (event) => {
@@ -34,8 +48,6 @@ export const actions: Actions = {
 				});
 			}
 		}
-
-		console.log(session);
 
 		let newLink: Prisma.LinkCreateInput = {
 			slug: customName ?? crypto.randomUUID().slice(0, 8),
