@@ -6,15 +6,15 @@
 	import NormalButton from '$lib/components/Buttons/NormalButton.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import Header1 from '$lib/components/Headers/Header1.svelte';
+	import Hr from '$lib/components/Hr.svelte';
 	import InputField from '$lib/components/InputField.svelte';
-
-	import type { ActionData, PageServerData } from './$types';
+	import Profile from '$lib/components/Profile.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	import { signIn } from '@auth/sveltekit/client';
 	import { clsx } from 'clsx';
-	import Profile from '$lib/components/Profile.svelte';
-	import Hr from '$lib/components/Hr.svelte';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+
+	import type { ActionData, PageServerData } from './$types';
 
 	export let form: ActionData;
 	export let data: PageServerData;
