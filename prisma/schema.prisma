@@ -12,7 +12,7 @@ datasource db {
 
 model Link {
   id         Int      @id @default(autoincrement())
-  slug       String
+  slug       String   @unique
   link       String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
