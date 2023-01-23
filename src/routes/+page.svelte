@@ -10,7 +10,6 @@
 	import InputField from '$lib/components/InputField.svelte';
 	import MyLinks from '$lib/components/MyLinks.svelte';
 	import Profile from '$lib/components/Profile.svelte';
-	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	import { signIn } from '@auth/sveltekit/client';
 	import { clsx } from 'clsx';
@@ -44,7 +43,7 @@
 
 <main class="grid place-items-center min-h-screen">
 	<div class="grid {session && 'grid-cols-1 lg:grid-cols-3'} lg:items-start">
-		<Card customClass={!session ? 'w-[32rem]' : ''}>
+		<Card customClass={!session ? 'lg:w-96' : ''}>
 			<Header1>Pondokeun</Header1>
 			<form
 				method="POST"
@@ -132,7 +131,7 @@
 			{:else}
 				<Hr label="Sign in for more features" />
 				<div class="flex space-x-2">
-					<NormalButton customClass="bg-white w-1/2 hover:bg-gray-200 text-dark"
+					<NormalButton customClass="bg-white w-1/2 hover:bg-gray-400 text-dark"
 						>Google</NormalButton
 					>
 					<NormalButton
