@@ -36,11 +36,18 @@
 <main class="grid place-items-center min-h-screen">
 	<Card>
 		<Header1>Pondokeun</Header1>
-		<form method="POST" use:enhance>
+		<form
+			method="POST"
+			use:enhance={() => {
+				return async ({ update }) => {
+					await update({ reset: false });
+				};
+			}}
+		>
 			<div class="flex space-x-2 mb-4">
-				<InputField placeholder="Enter the link here" name="link" type="url" customClass='w-4/6' />
+				<InputField placeholder="Enter the link here" name="link" type="url" customClass="w-4/6" />
 
-				<NormalButton customClass="bg-yellow-500 hover:bg-red-500 active:bg-red-700"
+				<NormalButton customClass="bg-yellow-500 hover:bg-red-500 active:bg-red-700 w-2/6"
 					>Shorten</NormalButton
 				>
 			</div>
@@ -55,8 +62,14 @@
 				<label for="useCustomName"> Custom name </label>
 			</div>
 
-			{#if useCustomName}
-				<InputField placeholder="Enter the custom name" name="customName" type="text" customClass='mt-4 w-full' />
+			{#if useCustomName === true}
+				<InputField
+					placeholder="Enter the custom name"
+					name="customName"
+					type="text"
+					customClass="mt-4 w-full"
+					pattern="[a-zA-Z0-9-_]+"
+				/>
 			{/if}
 		</form>
 
@@ -76,7 +89,7 @@
 					>
 				</p>
 			</Alert>
-		{:else if form?.status === 'error'}
+		{:else if form?.status === 'error' || form?.status === 'fail'}
 			<Alert status="error" title="Failed to shorten link!">
 				<p class="mt-2 text-sm text-red-700 dark:text-white">
 					{form.message}
@@ -84,7 +97,7 @@
 			</Alert>
 		{/if}
 
-    <hr class="my-4" />
+		<hr class="my-4" />
 
 		<p class="mb-2">Sign in for more features:</p>
 		<div class="flex space-x-2">
