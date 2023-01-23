@@ -43,7 +43,7 @@
 
 <main class="grid place-items-center min-h-screen">
 	<div class="grid {session && 'grid-cols-1 lg:grid-cols-3'} lg:items-start">
-		<Card customClass={!session ? 'lg:w-96' : ''}>
+		<Card customClass='lg:w-96'>
 			<Header1>Pondokeun</Header1>
 			<form
 				method="POST"
@@ -99,15 +99,15 @@
 
 			{#if form?.status === 'success'}
 				<Alert title="Here's your shortened link!" status="success">
-					<p class="mt-2 text-sm text-green-700 dark:text-white">
+					<p class="mt-2 text-sm text-green-700 dark:text-white space-y-2">
 						<a
 							href="{appUrl}/{form?.addedLink?.slug}"
-							class="underline"
+							class="underline block"
 							target="_blank"
 							rel="noreferrer">{appUrl}/{form?.addedLink?.slug}</a
 						>
 						<button
-							class="bg-gray-200 text-gray-800 px-2 py-1 ml-2 dark:bg-gray-800 dark:text-white rounded"
+							class="bg-gray-200 text-gray-800 px-2 py-1 dark:bg-gray-800 dark:text-white rounded"
 							on:click={() => copyText(`${appUrl}/${form?.addedLink?.slug}`)}
 							>{isCopied ? 'Copied!' : 'Copy link'}</button
 						>
@@ -142,7 +142,7 @@
 			{/if}
 		</Card>
 		{#if session}
-      <MyLinks links={data.links} />		
+			<MyLinks links={data.links} />
 		{/if}
 	</div>
 </main>
