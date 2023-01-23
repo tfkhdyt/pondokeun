@@ -6,8 +6,8 @@
   export let email: string | null | undefined;
 </script>
 
-<article class="rounded-xl border-2 border-gray-100 bg-white">
-	<div class="flex items-start p-6">
+<article class="rounded-xl border-2 border-gray-100 dark:border-gray-600 dark:shadow bg-white dark:bg-gray-800">
+	<div class="flex items-start p-6 ">
 		<img
 			alt="Speaker"
 			src={image}
@@ -15,11 +15,11 @@
 		/>
 
 		<div class="ml-4">
-			<h3 class="font-medium sm:text-lg">
-				Welcome, {name}
+			<h3 class="font-medium sm:text-lg dark:text-gray-300">
+				{name}
 			</h3>
 
-			<p class="text-sm text-gray-700">
+			<p class="text-sm text-gray-700 dark:text-gray-400">
 				{email}
 			</p>
 		</div>

@@ -13,6 +13,8 @@
 	import { signIn } from '@auth/sveltekit/client';
 	import { clsx } from 'clsx';
 	import Profile from '$lib/components/Profile.svelte';
+	import Hr from '$lib/components/Hr.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	export let form: ActionData;
 	export let data: PageServerData;
@@ -74,7 +76,10 @@
 					/>
 					<label
 						for="useCustomName"
-						class={clsx($page.data.session?.user || 'opacity-50 line-through')}
+						class={clsx(
+							$page.data.session?.user || 'opacity-50 line-through',
+							'dark:text-gray-300'
+						)}
 						title={!$page.data.session ? 'You should sign in first to use this feature' : undefined}
 					>
 						Custom slug
@@ -117,16 +122,14 @@
 			{/if}
 
 			{#if $page.data.session?.user}
-				<hr class="my-4" />
+				<Hr label="Profile" />
 				<Profile
 					image={$page.data.session.user.image}
 					name={$page.data.session.user.name}
 					email={$page.data.session.user.email}
 				/>
 			{:else}
-				<hr class="my-4" />
-
-				<p class="mb-2">Sign in for more features:</p>
+				<Hr label="Sign in for more features" />
 				<div class="flex space-x-2">
 					<NormalButton customClass="bg-white w-1/2 hover:bg-gray-200 text-dark"
 						>Google</NormalButton
@@ -147,27 +150,27 @@
 							<thead>
 								<tr>
 									<th
-										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-white"
+										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-300"
 									>
 										Slug
 									</th>
 									<th
-										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-white"
+										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-300"
 									>
 										Original url
 									</th>
 									<th
-										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-white"
+										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-300"
 									>
 										Created date
 									</th>
 									<th
-										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-white"
+										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-300"
 									>
 										Updated date
 									</th>
 									<th
-										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-white"
+										class="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900 dark:text-gray-300"
 									>
 										Actions
 									</th>
@@ -178,9 +181,14 @@
 								{#each data.links as link (link.id)}
 									<tr>
 										<td
-											class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-white"
+											class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 dark:text-gray-300"
 										>
-											<a href={`${appUrl}/${link.slug}`} class="underline" target="_blank" rel="noreferrer">
+											<a
+												href={`${appUrl}/${link.slug}`}
+												class="underline"
+												target="_blank"
+												rel="noreferrer"
+											>
 												/{link.slug}
 											</a>
 										</td>
@@ -192,6 +200,21 @@
 										</td>
 										<td class="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200">
 											{new Date(link.updated_at).toLocaleString('id-ID')}
+										</td>
+										<td class="whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200">
+											<Tooltip label="Copied">
+												<NormalButton
+													customClass="bg-blue-500 hover:bg-blue-600 text-white px-2"
+													onClick={() => navigator.clipboard.writeText(`${appUrl}/${link.slug}`)}
+													>Copy</NormalButton
+												>
+											</Tooltip>
+											<NormalButton customClass="bg-yellow-500 hover:bg-yellow-600 text-white px-2"
+												>Edit</NormalButton
+											>
+											<NormalButton customClass="bg-pink-500 hover:bg-pink-600 text-white px-2"
+												>Delete</NormalButton
+											>
 										</td>
 									</tr>
 								{/each}
