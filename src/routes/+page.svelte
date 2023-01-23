@@ -64,7 +64,7 @@
 
 			{#if useCustomName === true}
 				<InputField
-					placeholder="Enter the custom name"
+					placeholder="Enter the custom name (Alphanumeric, hyphen, underscore)"
 					name="customName"
 					type="text"
 					customClass="mt-4 w-full"
