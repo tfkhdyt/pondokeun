@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 
 	import { env } from '$env/dynamic/public';
 
@@ -10,6 +11,8 @@
 	import InputField from '$lib/components/InputField.svelte';
 
 	import type { ActionData } from './$types';
+
+  import { signIn, signOut } from "@auth/sveltekit/client"
 
 	export let form: ActionData;
 	let isCopied = false;
@@ -97,14 +100,18 @@
 			</Alert>
 		{/if}
 
-		<hr class="my-4" />
+		{#if $page.data.session}
+      <p>You're logged in as {$page.data.session.user?.name}</p>
+    {:else}
+			<hr class="my-4" />
 
-		<p class="mb-2">Sign in for more features:</p>
-		<div class="flex space-x-2">
-			<NormalButton customClass="bg-white w-1/2 hover:bg-gray-200 text-dark">Google</NormalButton>
-			<NormalButton customClass="bg-gray-800 w-1/2 hover:bg-gray-600 text-white"
-				>GitHub</NormalButton
-			>
-		</div>
+			<p class="mb-2">Sign in for more features:</p>
+			<div class="flex space-x-2">
+				<NormalButton customClass="bg-white w-1/2 hover:bg-gray-200 text-dark">Google</NormalButton>
+				<NormalButton customClass="bg-gray-800 w-1/2 hover:bg-gray-600 text-white" onClick={() => signIn('github')}
+					>GitHub</NormalButton
+				>
+			</div>
+		{/if}
 	</Card>
 </main>
