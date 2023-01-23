@@ -2,8 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 
-	import { env } from '$env/dynamic/public';
-
 	import Alert from '$lib/components/Alert.svelte';
 	import NormalButton from '$lib/components/Buttons/NormalButton.svelte';
 	import Card from '$lib/components/Card.svelte';
@@ -12,13 +10,14 @@
 
 	import type { ActionData } from './$types';
 
-  import { signIn, signOut } from "@auth/sveltekit/client"
+	import { signIn, signOut } from '@auth/sveltekit/client';
+  import { clsx } from 'clsx';
 
 	export let form: ActionData;
 	let isCopied = false;
 	let useCustomName = false;
 
-	const appUrl = env.PUBLIC_APP_URL;
+	const appUrl = $page.url.origin;
 
 	async function copyText(text: string) {
 		await navigator.clipboard.writeText(text);
@@ -59,10 +58,11 @@
 					type="checkbox"
 					id="useCustomName"
 					name="useCustomName"
-					class="rounded-md"
+					class="rounded-md disabled:opacity-50"
 					bind:checked={useCustomName}
+          disabled={!$page.data.session?.user}
 				/>
-				<label for="useCustomName"> Custom name </label>
+				<label for="useCustomName" class={clsx($page.data.session?.user || 'opacity-50 line-through')}> Custom name </label>
 			</div>
 
 			{#if useCustomName === true}
@@ -101,15 +101,44 @@
 		{/if}
 
 		{#if $page.data.session}
-      <p>You're logged in as {$page.data.session.user?.name}</p>
-    {:else}
+			<hr class="my-4" />
+			<article class="rounded-xl border-2 border-gray-100 bg-white">
+				<div class="flex items-start p-6">
+					<img
+						alt="Speaker"
+						src={$page.data.session.user?.image}
+						class="h-14 w-14 rounded-lg object-cover"
+					/>
+
+					<div class="ml-4">
+						<h3 class="font-medium sm:text-lg">
+							Welcome, {$page.data.session.user?.name}
+						</h3>
+
+						<p class="text-sm text-gray-700">
+							{$page.data.session.user?.email}
+						</p>
+					</div>
+				</div>
+
+				<div class="flex justify-end -mt-6">
+					<button
+						class="flex items-center rounded-tl-xl rounded-br-xl bg-red-600 hover:bg-red-800 py-1.5 px-3 text-white transition duration-500 ease-in-out"
+            on:click={() => signOut()}
+					>
+						<p class="font-medium">Log out</p>
+					</button>
+				</div>
+			</article>
+		{:else}
 			<hr class="my-4" />
 
 			<p class="mb-2">Sign in for more features:</p>
 			<div class="flex space-x-2">
 				<NormalButton customClass="bg-white w-1/2 hover:bg-gray-200 text-dark">Google</NormalButton>
-				<NormalButton customClass="bg-gray-800 w-1/2 hover:bg-gray-600 text-white" onClick={() => signIn('github')}
-					>GitHub</NormalButton
+				<NormalButton
+					customClass="bg-gray-800 w-1/2 hover:bg-gray-600 text-white"
+					onClick={() => signIn('github')}>GitHub</NormalButton
 				>
 			</div>
 		{/if}
