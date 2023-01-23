@@ -31,8 +31,6 @@
 			isCopied = false;
 		}, 1500);
 	}
-
-	$: console.log(data.links);
 </script>
 
 <svelte:head>
