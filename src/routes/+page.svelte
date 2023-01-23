@@ -10,8 +10,9 @@
 
 	import type { ActionData } from './$types';
 
-	import { signIn, signOut } from '@auth/sveltekit/client';
-  import { clsx } from 'clsx';
+	import { signIn } from '@auth/sveltekit/client';
+	import { clsx } from 'clsx';
+	import Profile from '$lib/components/Profile.svelte';
 
 	export let form: ActionData;
 	let isCopied = false;
@@ -60,9 +61,15 @@
 					name="useCustomName"
 					class="rounded-md disabled:opacity-50"
 					bind:checked={useCustomName}
-          disabled={!$page.data.session?.user}
+					disabled={!$page.data.session?.user}
 				/>
-				<label for="useCustomName" class={clsx($page.data.session?.user || 'opacity-50 line-through')}> Custom name </label>
+				<label
+					for="useCustomName"
+					class={clsx($page.data.session?.user || 'opacity-50 line-through')}
+					title={!$page.data.session ? 'You should sign in first to use this feature' : undefined}
+				>
+					Custom name
+				</label>
 			</div>
 
 			{#if useCustomName === true}
@@ -100,36 +107,13 @@
 			</Alert>
 		{/if}
 
-		{#if $page.data.session}
+		{#if $page.data.session?.user}
 			<hr class="my-4" />
-			<article class="rounded-xl border-2 border-gray-100 bg-white">
-				<div class="flex items-start p-6">
-					<img
-						alt="Speaker"
-						src={$page.data.session.user?.image}
-						class="h-14 w-14 rounded-lg object-cover"
-					/>
-
-					<div class="ml-4">
-						<h3 class="font-medium sm:text-lg">
-							Welcome, {$page.data.session.user?.name}
-						</h3>
-
-						<p class="text-sm text-gray-700">
-							{$page.data.session.user?.email}
-						</p>
-					</div>
-				</div>
-
-				<div class="flex justify-end -mt-6">
-					<button
-						class="flex items-center rounded-tl-xl rounded-br-xl bg-red-600 hover:bg-red-800 py-1.5 px-3 text-white transition duration-500 ease-in-out"
-            on:click={() => signOut()}
-					>
-						<p class="font-medium">Log out</p>
-					</button>
-				</div>
-			</article>
+			<Profile
+				image={$page.data.session.user.image}
+				name={$page.data.session.user.name}
+				email={$page.data.session.user.email}
+			/>
 		{:else}
 			<hr class="my-4" />
 
