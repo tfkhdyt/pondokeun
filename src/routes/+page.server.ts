@@ -24,7 +24,7 @@ export const actions: Actions = {
 		const customName = data.get('customName') as string;
 
 		if (!link) {
-			return fail(400, { link, missing: true });
+			return fail(400, { status: 'fail', message: "Link shouldn't be empty" });
 		}
 
 		if (customName) {
