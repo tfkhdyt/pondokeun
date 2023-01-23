@@ -1,10 +1,10 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import { Prisma } from '@prisma/client';
 import { db } from '../lib/database/prisma';
-import { page } from '$app/stores';
 
 export const actions: Actions = {
 	default: async (event) => {
+		const session = await event.locals.getSession();
 		const data = await event.request.formData();
 		const link = data.get('link') as string;
 		const customName = data.get('customName') as string;
@@ -14,6 +14,13 @@ export const actions: Actions = {
 		}
 
 		if (customName) {
+			if (!session) {
+				return fail(401, {
+					status: 'fail',
+					message: 'You should sign in first'
+				});
+			}
+
 			const isExist = await db.link.findFirst({
 				where: {
 					slug: customName
@@ -28,24 +35,21 @@ export const actions: Actions = {
 			}
 		}
 
-		const session = await event.locals.getSession();
+		console.log(session);
 
-		let newLink: Prisma.LinkCreateInput;
+		let newLink: Prisma.LinkCreateInput = {
+			slug: customName ?? crypto.randomUUID().slice(0, 8),
+			link
+		};
 
 		if (session?.user?.email) {
 			newLink = {
-				slug: customName ?? crypto.randomUUID().slice(0, 8),
-				link,
+				...newLink,
 				user: {
 					connect: {
 						email: session.user.email
 					}
 				}
-			};
-		} else {
-			newLink = {
-				slug: customName ?? crypto.randomUUID().slice(0, 8),
-				link
 			};
 		}
 
