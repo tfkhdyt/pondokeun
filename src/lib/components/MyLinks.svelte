@@ -7,10 +7,17 @@
 	import Tooltip from './Tooltip.svelte';
 
 	import type { Link } from '@prisma/client';
+	import Popup from './Popup.svelte';
 
 	export let links: Link[];
+	let isOpen = false;
+	let deletedLink: Link | null = null;
 
 	const appUrl = $page.url.origin;
+
+	function handleDeleteClick(link: Link) {
+		(isOpen = true), (deletedLink = link);
+	}
 </script>
 
 <Card customClass="lg:col-span-2">
@@ -84,8 +91,9 @@
 									<NormalButton customClass="bg-yellow-500 hover:bg-yellow-600 text-white px-2"
 										>Edit</NormalButton
 									>
-									<NormalButton customClass="bg-pink-500 hover:bg-pink-600 text-white px-2"
-										>Delete</NormalButton
+									<NormalButton
+										customClass="bg-pink-500 hover:bg-pink-600 text-white px-2"
+										onClick={() => handleDeleteClick(link)}>Delete</NormalButton
 									>
 								</td>
 							</tr>
@@ -98,3 +106,7 @@
 		{/if}
 	</div>
 </Card>
+<Popup {isOpen} link={deletedLink} on:deleteModalClosed={() => {
+  isOpen = false;
+  deletedLink = null 
+}} />

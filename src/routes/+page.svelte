@@ -21,6 +21,7 @@
 
 	let isCopied = false;
 	let useCustomName = false;
+
 	$: session = $page.data.session;
 
 	const appUrl = $page.url.origin;
@@ -33,6 +34,7 @@
 			isCopied = false;
 		}, 1500);
 	}
+
 </script>
 
 <svelte:head>
@@ -43,7 +45,7 @@
 
 <main class="grid place-items-center min-h-screen">
 	<div class="grid {session && 'grid-cols-1 lg:grid-cols-3'} lg:items-start">
-		<Card customClass='lg:w-96'>
+		<Card customClass="lg:w-96">
 			<Header1>Pondokeun</Header1>
 			<form
 				method="POST"
