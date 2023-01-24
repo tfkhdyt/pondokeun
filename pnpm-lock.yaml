@@ -21,7 +21,6 @@ specifiers:
   prisma: ^4.9.0
   svelte: ^3.54.0
   svelte-check: ^3.0.1
-  svelte-simple-modal: ^1.5.0
   tailwindcss: ^3.2.4
   tslib: ^2.4.1
   typescript: ^4.9.3
@@ -33,7 +32,6 @@ dependencies:
   '@auth/sveltekit': 0.1.12_jjtf66hbwfiwo2vqrkskvyeeaq
   '@next-auth/prisma-adapter': 1.0.5_@prisma+client@4.9.0
   '@prisma/client': 4.9.0_prisma@4.9.0
-  svelte-simple-modal: 1.5.0_svelte@3.55.1
 
 devDependencies:
   '@sveltejs/adapter-auto': 1.0.2_@sveltejs+kit@1.2.2
@@ -1957,14 +1955,6 @@ packages:
       svelte: 3.55.1
       typescript: 4.9.4
     dev: true
-
-  /svelte-simple-modal/1.5.0_svelte@3.55.1:
-    resolution: {integrity: sha512-EtKOlwDos6zR2YD2hDF4poY8+MAHbsoJW62c6hk2XPXUV5extY2L621J9jlDKq7nVDeuaMtBO9aYtyXVXA21vA==}
-    peerDependencies:
-      svelte: ^3.31.2
-    dependencies:
-      svelte: 3.55.1
-    dev: false
 
   /svelte/3.55.1:
     resolution: {integrity: sha512-S+87/P0Ve67HxKkEV23iCdAh/SX1xiSfjF1HOglno/YTbSTW7RniICMCofWGdJJbdjw3S+0PfFb1JtGfTXE0oQ==}
