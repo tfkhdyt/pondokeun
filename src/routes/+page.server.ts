@@ -4,6 +4,8 @@ import { db } from '../lib/database/prisma';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
+  event.depends('links');
+
 	const session = await event.locals.getSession();
 	const links = await db.link.findMany({
 		where: {

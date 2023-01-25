@@ -3,6 +3,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import type { Link } from '@prisma/client';
 	import { createEventDispatcher } from 'svelte';
+	import { invalidate } from '$app/navigation';
 
 	export let isOpen = false;
 	export let link: Link | null = null;
@@ -13,9 +14,19 @@
 		dispatch('deleteModalClosed');
 	}
 
-	function handleDelete() {
+	async function handleDelete() {
+		const response = await fetch(`/api/links/${link?.id}`, {
+			method: 'DELETE'
+		});
+		const data = await response.json();
+
+		if (response.status !== 200) {
+			return console.error({ data });
+		}
+
 		console.log(`/${link?.slug} is deleted!`);
-    toggle();
+		invalidate('links');
+		toggle();
 	}
 </script>
 
