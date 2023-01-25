@@ -12,10 +12,10 @@ export const load = (async ({ params }) => {
 	});
 
 	if (!link) {
-    return {
-      message: 'Page not found'
-    };
+		return {
+			message: 'Page not found'
+		};
 	}
 
-  throw redirect(301, link.link);
+	throw redirect(301, link.link);
 }) satisfies PageServerLoad;
