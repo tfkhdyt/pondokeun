@@ -2,7 +2,7 @@
 	import { Button } from 'flowbite-svelte';
 </script>
 
-<div class="mb-4 space-y-6 text-center md:mb-8">
+<div class="mb-4 space-y-6 text-center">
 	<h1 class="text-4xl font-bold">
 		Free and Open Source <span class="text-[#1a56db]">Link Shortener</span>
 	</h1>
