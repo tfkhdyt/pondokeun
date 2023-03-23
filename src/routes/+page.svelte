@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CTA from '$lib/components/CTA.svelte';
 	import SingleResult from '$lib/components/SingleResult.svelte';
-	import { Button, Input, Label } from 'flowbite-svelte';
+	import { Button, Input } from 'flowbite-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { ActionData, PageData } from './$types';
 
