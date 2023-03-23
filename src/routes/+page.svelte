@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CTA from '$lib/components/CTA.svelte';
 	import SingleResult from '$lib/components/SingleResult.svelte';
-	import { Button, Input } from 'flowbite-svelte';
+	import { Button, Helper, Input } from 'flowbite-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { ActionData, PageData } from './$types';
 
@@ -28,6 +28,7 @@
 		name="link"
 		bind:value={$formS.link}
 		{...$constraints.link}
+		color={$errors.link && 'red'}
 	>
 		<svg
 			slot="left"
@@ -47,6 +48,10 @@
 		</svg>
 		<Button slot="right" size="md" type="submit">Search</Button>
 	</Input>
+
+	{#if $errors.link}
+		<Helper class="mt-2" color="red">{$errors.link.join(', ')}</Helper>
+	{/if}
 </form>
 
 {#if form?.success === true}
