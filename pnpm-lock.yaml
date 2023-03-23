@@ -17,6 +17,7 @@ specifiers:
   eslint-config-prettier: ^8.8.0
   eslint-plugin-svelte3: ^4.0.0
   flowbite: ^1.6.4
+  flowbite-svelte: ^0.34.2
   postcss: ^8.4.21
   prettier: ^2.8.6
   prettier-plugin-svelte: ^2.10.0
@@ -50,6 +51,7 @@ devDependencies:
   eslint: 8.36.0
   eslint-config-prettier: 8.8.0_eslint@8.36.0
   eslint-plugin-svelte3: 4.0.0_wzem237sbvnwe7n34ytc5phasy
+  flowbite-svelte: 0.34.2_ke46fu5ukh6a47rqdgrle26l3a
   postcss: 8.4.21
   prettier: 2.8.6
   prettier-plugin-svelte: 2.10.0_bzjcbf5vweu43cmyrxgltnmf74
@@ -382,7 +384,6 @@ packages:
 
   /@popperjs/core/2.11.6:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
-    dev: false
 
   /@prisma/client/4.11.0_prisma@4.11.0:
     resolution: {integrity: sha512-0INHYkQIqgAjrt7NzhYpeDQi8x3Nvylc2uDngKyFDDj1tTRQ4uV1HnVmd1sQEraeVAN63SOK0dgCKQHlvjL0KA==}
@@ -889,6 +890,10 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /classnames/2.3.2:
+    resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
+    dev: true
+
   /cli-truncate/3.1.0:
     resolution: {integrity: sha512-wfOBkjXteqSnI59oPcJkcPl/ZmwvMMOj340qUIY1SKZCv0B9Cf4D4fAucRkIKQmsIuYK3x1rrgU7MeGRruiuiA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -1259,12 +1264,24 @@ packages:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: true
 
+  /flowbite-svelte/0.34.2_ke46fu5ukh6a47rqdgrle26l3a:
+    resolution: {integrity: sha512-Botfv97qQq0bPiK0vLVx0KIttFHj5iQ38a+krwBlqkTTzRO3zeUuRAZPg6A/FVLF5swXU8zb5c37Kls21vGJHA==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    peerDependencies:
+      flowbite: ^1.6.3
+      svelte: ^3.55.1
+    dependencies:
+      '@popperjs/core': 2.11.6
+      classnames: 2.3.2
+      flowbite: 1.6.4
+      svelte: 3.57.0
+    dev: true
+
   /flowbite/1.6.4:
     resolution: {integrity: sha512-//kSaigwERCcE3udumadB3+xfOXeN/ZQzcub2qVCHuB7uscB4XIm3yP9R8zL0XsEOnYG2lnroq/dydQZbzvESw==}
     dependencies:
       '@popperjs/core': 2.11.6
       mini-svg-data-uri: 1.4.4
-    dev: false
 
   /fraction.js/4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}

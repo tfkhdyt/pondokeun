@@ -8,7 +8,7 @@ import { fail, type Actions } from '@sveltejs/kit';
 const schema = z.object({
 	link: z
 		.string({ required_error: 'Link is required!', invalid_type_error: 'Invalid type' })
-		.url('Invalid link'),
+		.url({ message: 'Invalid url' }),
 	customName: z.string().optional()
 });
 
@@ -18,13 +18,12 @@ export const load = (async (event) => {
 	return { form };
 }) satisfies PageServerLoad;
 
-export const actions = {
+export const actions: Actions = {
 	default: async (event) => {
 		const form = await superValidate(event, schema);
-		console.log('POST', form);
 
 		if (!form.valid) {
-			return fail(400, { form, success: false });
+			return fail(400, { form });
 		}
 
 		const { link, customName } = form.data;
@@ -56,7 +55,7 @@ export const actions = {
 
 		return { form, addedLink, success: true };
 	}
-} satisfies Actions;
+};
 
 // export const actions: Actions = {
 // 	default: async ({ request }) => {
