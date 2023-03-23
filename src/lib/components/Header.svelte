@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { Button, Navbar, NavBrand, NavHamburger, NavLi, NavUl } from 'flowbite-svelte';
 
-	let currentPath = $page.url.pathname;
+	$: currentPath = $page.url.pathname;
 </script>
 
 <Navbar let:hidden let:toggle>
