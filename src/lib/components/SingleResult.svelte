@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { PUBLIC_APP_URL } from '$env/static/public';
-	import { Button, ButtonGroup, Tooltip } from 'flowbite-svelte';
+	import { A, Button, ButtonGroup, Tooltip } from 'flowbite-svelte';
 
 	export let link: string;
 	export let slug: string;
@@ -17,7 +17,7 @@
 		<span class="font-medium">{link}</span>
 	</div>
 	<div class="flex items-center space-x-2">
-		<span class="font-bold">/{slug}</span>
+		<A class="font-bold" href={completeUrl} target="_blank">/{slug}</A>
 		<ButtonGroup>
 			<Button on:click={() => navigator.clipboard.writeText(completeUrl)} id={slug} type="button">
 				<svg
