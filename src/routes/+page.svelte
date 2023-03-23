@@ -1,145 +1,148 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	import CTA from '$lib/components/CTA.svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { ActionData, PageData } from './$types';
 
-	import NormalButton from '$lib/components/Buttons/NormalButton.svelte';
-	import Header1 from '$lib/components/Headers/Header1.svelte';
-	import Hr from '$lib/components/Hr.svelte';
-	import InputField from '$lib/components/InputField.svelte';
-	import MyLinks from '$lib/components/MyLinks.svelte';
-	import Profile from '$lib/components/Profile.svelte';
+	export let data: PageData;
+	export let actions: ActionData;
 
-	import { signIn } from '@auth/sveltekit/client';
-	import { clsx } from 'clsx';
-	import { fade } from 'svelte/transition';
-
-	import type { ActionData, PageServerData } from './$types';
-
-	export let form: ActionData;
-	export let data: PageServerData;
-
-	let isCopied = false;
-	let useCustomName = false;
-
-	$: session = $page.data.session;
-
-	const appUrl = $page.url.origin;
-
-	async function copyText(text: string) {
-		await navigator.clipboard.writeText(text);
-		isCopied = true;
-
-		setTimeout(() => {
-			isCopied = false;
-		}, 1500);
-	}
+	const { form, errors, constraints, enhance } = superForm(data.form);
 </script>
 
 <svelte:head>
 	<title>Pondokeun</title>
 </svelte:head>
 
-<!-- svelte-ignore a11y-no-redundant-roles -->
-
-<main class="grid">
-	<div class="flex flex-col lg:flex-row p-4 lg:p-64 gap-4 lg:gap-8 lg:w-screen justify-center md:justify-stretch items-start">
-		<div class="card card-hover variant-ringed-warning p-4 flex-1 w-full lg:basis-2/6">
-			<header class="card-header">
-				<Header1>Pondokeun</Header1>
-			</header>
-			<div class="p-4">
-				<form
-					method="POST"
-					use:enhance={() => {
-						return async ({ update }) => {
-							await update({ reset: false });
-						};
-					}}
-				>
-					<div class="flex space-x-2 mb-4">
-						<input
-							type="url"
-							name="link"
-							placeholder="Enter the link here"
-							required
-							class="basis-4/6"
-						/>
-						<button class="btn variant-filled-warning btn-base basis-2/6"> Shorten! </button>
-					</div>
-					<div class="flex items-center space-x-2">
-						<input
-							type="checkbox"
-							id="useCustomName"
-							name="useCustomName"
-							class="disabled:opacity-50"
-							bind:checked={useCustomName}
-							disabled={!$page.data.session?.user}
-						/>
-						<label
-							for="useCustomName"
-							class={clsx(
-								$page.data.session?.user || 'opacity-50 line-through',
-								'dark:text-gray-300'
-							)}
-							title={!$page.data.session
-								? 'You should sign in first to use this feature'
-								: undefined}
-						>
-							Custom slug
-						</label>
-					</div>
-
-					{#if useCustomName === true}
-						<InputField
-							placeholder="Enter the custom slug (Alphanumeric, hyphen, underscore)"
-							name="customName"
-							type="text"
-							customClass="mt-4"
-							pattern="[a-zA-Z0-9-_]+"
-						/>
-					{/if}
-				</form>
-
-				{#if form?.status === 'success'}
-					<aside class="alert variant-ghost-success mt-6" transition:fade|local={{ duration: 200 }}>
-						<div class="alert-message">
-							<h4 class="font-semibold">Here's your shortened link!</h4>
-							<a
-								href="{appUrl}/{form?.addedLink?.slug}"
-								class="underline block"
-								target="_blank"
-								rel="noreferrer">{appUrl}/{form?.addedLink?.slug}</a
-							>
-							<button
-								class="btn variant-filled-success btn-base"
-								on:click={() => copyText(`${appUrl}/${form?.addedLink?.slug}`)}
-								>{isCopied ? 'Copied!' : 'Copy link'}</button
-							>
-						</div>
-					</aside>
-				{:else if form?.status === 'error' || form?.status === 'fail'}
-					<aside class="alert variant-ghost-error mt-6" transition:fade|local={{ duration: 200 }}>
-						<div class="alert-message">
-							<h4 class="font-semibold">Failed to shorten link!</h4>
-							<p>{form.message}</p>
-						</div>
-					</aside>
-				{/if}
-
-				{#if session?.user?.image}
-					<Hr label="Profile" />
-					<Profile image={session.user.image} name={session.user.name} email={session.user.email} />
-				{:else}
-					<Hr label="Sign in for more features" />
-					<div class="flex space-x-2">
-						<button class="btn variant-filled-secondary btn-base basis-1/2"> Google </button>
-						<button class="btn variant-ghost-surface btn-base basis-1/2" on:click={() => signIn('github')}> GitHub </button>
-					</div>
-				{/if}
-			</div>
+<CTA />
+<form method="POST" use:enhance>
+	<label for="link" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+		>Paste a link to shorten it</label
+	>
+	<div class="relative">
+		<div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="w-5 h-5"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+				/>
+			</svg>
 		</div>
-		{#if session}
-			<MyLinks links={data.links} />
-		{/if}
+		<input
+			type="url"
+			id="link"
+			class="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:placeholder-gray-400 dark:text-white dark:bg-gray-700 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+			placeholder="Paste a link to shorten it"
+			required
+			name="link"
+			bind:value={$form.link}
+			{...$constraints.link}
+		/>
+		<button
+			type="submit"
+			class="absolute right-2.5 bottom-2.5 py-2 px-4 text-sm font-medium text-white bg-blue-700 rounded-lg dark:bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+			>Shorten</button
+		>
 	</div>
-</main>
+
+	{#if $errors.link}
+		<p class="mt-2 text-sm text-red-600 dark:text-red-500">
+			{$errors.link}
+		</p>
+	{/if}
+</form>
+
+{#if actions?.success === true && actions?.addedLink}
+	<div
+		class="flex justify-between items-center p-4 mt-4 mb-4 text-sm text-blue-800 bg-blue-50 rounded-lg dark:text-blue-400 dark:bg-gray-800"
+		role="alert"
+	>
+		<span class="sr-only">Info</span>
+		<div>
+			<span class="font-medium">{actions.addedLink.link}</span>
+		</div>
+		<div class="flex items-center space-x-2">
+			<span class="font-bold">/{actions.addedLink.slug}</span>
+
+			<button
+				type="button"
+				class="flex py-2 px-3 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-300 dark:text-white dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 focus:outline-none dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+				data-tooltip-target="tooltip-click"
+				data-tooltip-trigger="click"
+				on:click={async () => await navigator.clipboard.writeText('bruh')}
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="mr-1 w-5 h-5"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
+					/>
+				</svg>
+				Copy</button
+			>
+			<div
+				id="tooltip-click"
+				role="tooltip"
+				class="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 dark:bg-gray-700 tooltip"
+			>
+				Copied
+				<div class="tooltip-arrow" data-popper-arrow />
+			</div>
+			<button
+				type="button"
+				class="flex py-2 px-3 text-sm font-medium text-gray-900 bg-white rounded-full border border-gray-300 dark:text-white dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 focus:outline-none dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="mr-1 w-5 h-5"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+					/>
+				</svg>
+				Edit</button
+			>
+
+			<button
+				type="button"
+				class="flex py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-full dark:bg-red-500 hover:bg-red-700 focus:ring-4 focus:ring-red-200 focus:outline-none dark:hover:bg-red-600 dark:focus:ring-red-800"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="mr-1 w-5 h-5"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+					/>
+				</svg>
+				Delete</button
+			>
+		</div>
+	</div>
+{/if}

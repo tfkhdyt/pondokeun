@@ -1,7 +1,11 @@
 <script>
-	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
-	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../app.css';
+	import 'flowbite/dist/flowbite.css';
+
+	import Header from '$lib/components/Header.svelte';
 </script>
 
-<slot />
+<Header />
+<main class="container p-6 mx-auto md:p-8 md:max-w-screen-md">
+	<slot />
+</main>
