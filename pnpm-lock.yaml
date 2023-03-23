@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@auth/core': ^0.5.1
   '@auth/sveltekit': ^0.3.0
+  '@formkit/auto-animate': 1.0.0-beta.6
   '@next-auth/prisma-adapter': ^1.0.5
   '@prisma/client': ^4.11.0
   '@sveltejs/adapter-auto': ^2.0.0
@@ -35,6 +36,7 @@ specifiers:
 dependencies:
   '@auth/core': 0.5.1
   '@auth/sveltekit': 0.3.0_px2pahnw67xpuvhwev7s666cfu
+  '@formkit/auto-animate': 1.0.0-beta.6
   '@next-auth/prisma-adapter': 1.0.5_@prisma+client@4.11.0
   '@prisma/client': 4.11.0_prisma@4.11.0
   flowbite: 1.6.4
@@ -309,6 +311,10 @@ packages:
     resolution: {integrity: sha512-lxJ9R5ygVm8ZWgYdUweoq5ownDlJ4upvoWmO4eLxBYHdMo+vZ/Rx0EN6MbKWDJOSUGrqJy2Gt+Dyv/VKml0fjg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@formkit/auto-animate/1.0.0-beta.6:
+    resolution: {integrity: sha512-PVDhLAlr+B4Xb7e+1wozBUWmXa6BFU8xUPR/W/E+TsQhPS1qkAdAsJ25keEnFrcePSnXHrOsh3tiFbEToOzV9w==}
+    dev: false
 
   /@humanwhocodes/config-array/0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}
