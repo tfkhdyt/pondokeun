@@ -4,6 +4,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { db } from '../lib/database/prisma';
 import type { PageServerLoad } from './$types';
 import { fail, type Actions } from '@sveltejs/kit';
+import type { Prisma } from '@prisma/client';
 
 const schema = z.object({
 	link: z
@@ -14,12 +15,26 @@ const schema = z.object({
 
 export const load = (async (event) => {
 	const form = await superValidate(event, schema);
+	const session = await event.locals.getSession();
+
+	if (session?.user) {
+		const links = await db.link.findMany({
+			where: {
+				user: {
+					email: session.user.email
+				}
+			}
+		});
+
+		return { form, links };
+	}
 
 	return { form };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	default: async (event) => {
+		const session = await event.locals.getSession();
 		const form = await superValidate(event, schema);
 
 		if (!form.valid) {
@@ -29,6 +44,13 @@ export const actions: Actions = {
 		const { link, customName } = form.data;
 
 		if (customName) {
+			if (!session) {
+				return fail(401, {
+					status: 'fail',
+					message: 'You should sign in first'
+				});
+			}
+
 			const isExist = await db.link.findFirst({
 				where: {
 					slug: customName
@@ -44,14 +66,25 @@ export const actions: Actions = {
 			}
 		}
 
-		const addedLink = await db.link.create({
-			data: {
-				link,
-				slug: customName ?? crypto.randomUUID().slice(0, 8)
-			}
-		});
+		let newLink: Prisma.LinkCreateInput = {
+			link,
+			slug: customName ?? crypto.randomUUID().slice(0, 5)
+		};
 
-		console.log({ addedLink });
+		if (session?.user?.email) {
+			newLink = {
+				...newLink,
+				user: {
+					connect: {
+						email: session.user.email
+					}
+				}
+			};
+		}
+
+		const addedLink = await db.link.create({
+			data: newLink
+		});
 
 		return { form, addedLink, success: true };
 	}
