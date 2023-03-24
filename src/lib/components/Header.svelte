@@ -1,6 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Button, Navbar, NavBrand, NavHamburger, NavLi, NavUl } from 'flowbite-svelte';
+	import { signOut } from '@auth/sveltekit/client';
+	import {
+		Avatar,
+		Button,
+		Dropdown,
+		DropdownDivider,
+		DropdownHeader,
+		DropdownItem,
+		Navbar,
+		NavBrand,
+		NavHamburger,
+		NavLi,
+		NavUl
+	} from 'flowbite-svelte';
 
 	$: currentPath = $page.url.pathname;
 </script>
@@ -17,23 +30,41 @@
 		</span>
 	</NavBrand>
 	<div class="flex md:order-2">
-		<Button size="sm" pill href="/signin">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="currentColor"
-				class="mr-2 w-5 h-5"
+		{#if $page.data.session}
+			<div class="flex items-center space-x-4">
+				{#if $page.data.session.user?.image}
+					<Avatar id="user-drop" src={$page.data.session.user.image} dot={{ color: 'green' }} />
+					<Dropdown triggeredBy="#user-drop">
+						<DropdownHeader>
+							<span class="block text-sm">{$page.data.session.user?.name}</span>
+							<span class="block text-sm font-medium truncate"
+								>{$page.data.session.user?.email}</span
+							>
+						</DropdownHeader>
+						<DropdownDivider />
+						<DropdownItem on:click={() => signOut()}>Sign out</DropdownItem>
+					</Dropdown>
+				{/if}
+			</div>
+		{:else}
+			<Button size="sm" pill href="/signin">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="mr-2 w-5 h-5"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+					/>
+				</svg>
+				Sign In</Button
 			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-				/>
-			</svg>
-			Sign In</Button
-		>
+		{/if}
 		<NavHamburger on:click={toggle} />
 	</div>
 	<NavUl {hidden} class="order-1">
