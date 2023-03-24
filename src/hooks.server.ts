@@ -7,10 +7,10 @@ import { db } from '$lib/database/prisma';
 
 export const handle = SvelteKitAuth({
 	adapter: PrismaAdapter(db),
-	providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })],
-	session: {
-		generateSessionToken: () => {
-			return crypto.randomUUID();
-		}
-	}
+	providers: [GitHub({ clientId: GITHUB_ID, clientSecret: GITHUB_SECRET })]
+	// session: {
+	// 	generateSessionToken: () => {
+	// 		return crypto.randomUUID();
+	// 	}
+	// }
 });
