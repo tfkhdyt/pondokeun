@@ -4,6 +4,7 @@
 	import SingleResult from '$lib/components/SingleResult.svelte';
 	import autoAnimate from '@formkit/auto-animate';
 	import { Button, Helper, Input, Toggle } from 'flowbite-svelte';
+	import toast from 'svelte-french-toast';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { ActionData, PageData } from './$types';
 
@@ -13,6 +14,10 @@
 	const { form: formS, errors, constraints, enhance } = superForm(data.form);
 
 	let isUseCustomSlug = false;
+
+	$: if (!form?.success && form?.message) {
+		toast.error(form.message, { position: 'top-right' });
+	}
 </script>
 
 <svelte:head>
@@ -32,7 +37,7 @@
 		name="link"
 		bind:value={$formS.link}
 		{...$constraints.link}
-		color={$errors.link && 'red'}
+		color={$errors.link || !form?.success ? 'red' : 'base'}
 	>
 		<svg
 			slot="left"
