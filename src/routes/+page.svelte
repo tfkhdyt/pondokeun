@@ -82,7 +82,7 @@
 {#if form?.success === true && !$page.data.session}
 	<SingleResult slug={form.addedLink.slug} link={form.addedLink.link} />
 {:else if $page.data.session && data.links && data.links.length > 0}
-	<div class="space-y-2">
+	<div class="space-y-2" use:autoAnimate>
 		{#each data.links as link (link.id)}
 			<SingleResult slug={link.slug} link={link.link} />
 		{/each}
