@@ -38,7 +38,7 @@ export const actions: Actions = {
 		const form = await superValidate(event, schema);
 
 		if (!form.valid) {
-			return fail(400, { form });
+			return fail(400, { form, message: 'Invalid input' });
 		}
 
 		const { link, customName } = form.data;
@@ -46,8 +46,8 @@ export const actions: Actions = {
 		if (customName) {
 			if (!session) {
 				return fail(401, {
-					status: 'fail',
-					message: 'You should sign in first'
+					message: 'You should sign in first',
+					form
 				});
 			}
 
@@ -60,8 +60,7 @@ export const actions: Actions = {
 			if (isExist) {
 				return fail(400, {
 					message: 'Custom name is already used',
-					form,
-					success: false
+					form
 				});
 			}
 		}
