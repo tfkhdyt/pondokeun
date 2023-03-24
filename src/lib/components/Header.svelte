@@ -36,9 +36,8 @@
 					<Avatar id="user-drop" src={$page.data.session.user.image} dot={{ color: 'green' }} />
 					<Dropdown triggeredBy="#user-drop">
 						<DropdownHeader>
-							<span class="block text-sm">{$page.data.session.user?.name}</span>
-							<span class="block text-sm font-medium truncate"
-								>{$page.data.session.user?.email}</span
+							<span class="block text-sm font-medium">{$page.data.session.user?.name}</span>
+							<span class="block text-sm font-light truncate">{$page.data.session.user?.email}</span
 							>
 						</DropdownHeader>
 						<DropdownDivider />
