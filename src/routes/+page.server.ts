@@ -59,7 +59,7 @@ export const actions: Actions = {
 
 			if (isExist) {
 				return fail(400, {
-					message: 'Custom name is already used',
+					message: 'Custom slug has been used',
 					form
 				});
 			}
