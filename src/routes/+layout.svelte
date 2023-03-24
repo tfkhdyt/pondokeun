@@ -1,6 +1,5 @@
 <script>
 	import '../app.css';
-	import 'flowbite/dist/flowbite.css';
 	import autoAnimate from '@formkit/auto-animate';
 
 	import Header from '$lib/components/Header.svelte';
