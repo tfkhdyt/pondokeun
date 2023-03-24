@@ -1,11 +1,28 @@
 <script lang="ts">
+	import { invalidate } from '$app/navigation';
 	import { PUBLIC_APP_URL } from '$env/static/public';
 	import { A, Button, ButtonGroup, Tooltip } from 'flowbite-svelte';
+	import toast from 'svelte-french-toast';
 
 	export let link: string;
 	export let slug: string;
 
 	$: completeUrl = `${PUBLIC_APP_URL}/${slug}`;
+
+	const deleteLink = async () => {
+		const res = await fetch(`/api/links/${slug}`, {
+			method: 'DELETE'
+		});
+		const data = await res.json();
+
+		if (!res.ok) {
+			toast.error(data.message, { position: 'top-right' });
+			return;
+		}
+
+		toast.success(data.message, { position: 'top-right' });
+		invalidate('links');
+	};
 </script>
 
 <div
@@ -58,7 +75,7 @@
 				</svg>
 				Edit
 			</Button>
-			<Button color="red">
+			<Button color="red" on:click={deleteLink}>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
