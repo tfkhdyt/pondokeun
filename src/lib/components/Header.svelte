@@ -5,7 +5,6 @@
 		Avatar,
 		Button,
 		Dropdown,
-		DropdownDivider,
 		DropdownHeader,
 		DropdownItem,
 		Navbar,
@@ -40,7 +39,6 @@
 							<span class="block text-sm font-light truncate">{$page.data.session.user?.email}</span
 							>
 						</DropdownHeader>
-						<DropdownDivider />
 						<DropdownItem on:click={() => signOut()}>Sign out</DropdownItem>
 					</Dropdown>
 				{/if}
