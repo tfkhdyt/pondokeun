@@ -14,6 +14,8 @@ const schema = z.object({
 });
 
 export const load = (async (event) => {
+	event.depends('links');
+
 	const form = await superValidate(event, schema);
 	const session = await event.locals.getSession();
 
