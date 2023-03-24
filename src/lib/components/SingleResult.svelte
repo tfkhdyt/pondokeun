@@ -5,7 +5,7 @@
 	export let link: string;
 	export let slug: string;
 
-	const completeUrl = `${PUBLIC_APP_URL}/${slug}`;
+	$: completeUrl = `${PUBLIC_APP_URL}/${slug}`;
 </script>
 
 <div
@@ -19,7 +19,11 @@
 	<div class="flex items-center space-x-2">
 		<A class="font-bold" href={completeUrl} target="_blank">/{slug}</A>
 		<ButtonGroup>
-			<Button on:click={() => navigator.clipboard.writeText(completeUrl)} id={slug} type="button">
+			<Button
+				on:click={() => navigator.clipboard.writeText(completeUrl)}
+				id={`copy-button-${slug}`}
+				type="button"
+			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -36,7 +40,7 @@
 				</svg>
 				Copy
 			</Button>
-			<Tooltip trigger="click" triggeredBy={`#${slug}`}>Copied</Tooltip>
+			<Tooltip trigger="click" triggeredBy={`#copy-button-${slug}`}>Copied</Tooltip>
 			<Button>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
