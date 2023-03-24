@@ -4,20 +4,7 @@ import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async (event) => {
 	const session = await event.locals.getSession();
-	const { id } = event.params;
-	const linkId = parseInt(id, 10);
-
-	if (isNaN(linkId)) {
-		return json(
-			{
-				status: 'fail',
-				message: 'Id should be number'
-			},
-			{
-				status: 400
-			}
-		);
-	}
+	const { slug } = event.params;
 
 	if (!session?.user) {
 		return json(
@@ -32,7 +19,7 @@ export const DELETE: RequestHandler = async (event) => {
 	}
 
 	try {
-		await verifyLinkAvailability(linkId);
+		await verifyLinkAvailability(slug);
 	} catch (error) {
 		if (error instanceof Error) {
 			return json(
@@ -48,7 +35,7 @@ export const DELETE: RequestHandler = async (event) => {
 	}
 
 	try {
-		await verifyLinkOwner(linkId, session.user.email as string);
+		await verifyLinkOwner(slug, session.user.email as string);
 	} catch (error) {
 		if (error instanceof Error) {
 			return json(
@@ -65,7 +52,7 @@ export const DELETE: RequestHandler = async (event) => {
 
 	const result = await db.link.delete({
 		where: {
-			id: linkId
+			slug
 		}
 	});
 
@@ -73,7 +60,7 @@ export const DELETE: RequestHandler = async (event) => {
 		return json(
 			{
 				status: 'fail',
-				message: 'Failed to delete link'
+				message: `Failed to delete /${slug} link`
 			},
 			{
 				status: 500
@@ -83,14 +70,15 @@ export const DELETE: RequestHandler = async (event) => {
 
 	return json({
 		status: 'success',
+		message: `/${slug} link has been deleted`,
 		deletedLink: result
 	});
 };
 
-async function verifyLinkOwner(linkId: number, userEmail: string) {
+async function verifyLinkOwner(slug: string, userEmail: string) {
 	const result = await db.link.findFirst({
 		where: {
-			id: linkId,
+			slug,
 			user: {
 				email: userEmail
 			}
@@ -102,10 +90,10 @@ async function verifyLinkOwner(linkId: number, userEmail: string) {
 	}
 }
 
-async function verifyLinkAvailability(linkId: number) {
+async function verifyLinkAvailability(slug: string) {
 	const result = await db.link.findUnique({
 		where: {
-			id: linkId
+			slug
 		}
 	});
 
