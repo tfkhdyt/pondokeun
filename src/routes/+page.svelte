@@ -37,7 +37,7 @@
 		name="link"
 		bind:value={$formS.link}
 		{...$constraints.link}
-		color={$errors.link || !form?.success ? 'red' : 'base'}
+		color={$errors.link || (form?.success && form?.message) ? 'red' : 'base'}
 	>
 		<svg
 			slot="left"
@@ -61,22 +61,20 @@
 	{#if $errors.link}
 		<Helper class="mt-2" color="red">{$errors.link.join(', ')}</Helper>
 	{/if}
-	<Toggle
-		class="my-4"
-		bind:checked={isUseCustomSlug}
-		disabled={$page.data.session?.user ? false : true}>Use custom slug</Toggle
-	>
-	{#if isUseCustomSlug}
-		<Input
-			type="text"
-			placeholder="Your custom slug"
-			size="lg"
-			name="customName"
-			bind:value={$formS.customName}
-			{...$constraints.customName}
-		/>
-		{#if $errors.customName}
-			<Helper class="mt-2" color="red">{$errors.customName.join(', ')}</Helper>
+	{#if $page.data.session?.user}
+		<Toggle class="my-4" bind:checked={isUseCustomSlug}>Use custom slug</Toggle>
+		{#if isUseCustomSlug}
+			<Input
+				type="text"
+				placeholder="Your custom slug"
+				size="lg"
+				name="customName"
+				bind:value={$formS.customName}
+				{...$constraints.customName}
+			/>
+			{#if $errors.customName}
+				<Helper class="mt-2" color="red">{$errors.customName.join(', ')}</Helper>
+			{/if}
 		{/if}
 	{/if}
 </form>
@@ -84,7 +82,9 @@
 {#if form?.success === true && !$page.data.session}
 	<SingleResult slug={form.addedLink.slug} link={form.addedLink.link} />
 {:else if $page.data.session && data.links && data.links.length > 0}
-	{#each data.links as link (link.id)}
-		<SingleResult slug={link.slug} link={link.link} />
-	{/each}
+	<div class="space-y-2">
+		{#each data.links as link (link.id)}
+			<SingleResult slug={link.slug} link={link.link} />
+		{/each}
+	</div>
 {/if}
