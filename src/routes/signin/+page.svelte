@@ -13,6 +13,6 @@
 		<Button class="w-full" color="dark" outline on:click={() => signIn('github')}
 			>Sign in with GitHub</Button
 		>
-		<Button class="w-full" outline>Sign in with Google</Button>
+		<Button class="w-full">Sign in with Google</Button>
 	</form>
 </Card>
