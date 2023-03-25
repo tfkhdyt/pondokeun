@@ -15,4 +15,18 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 
 		return [addedLink, null];
 	}
+
+	async verifySlugAvailability(slug: string): Promise<Error | null> {
+		const link = await this.db.link.findFirst({
+			where: {
+				slug
+			}
+		});
+
+		if (link) {
+			return new Error(`/${slug} has been used`);
+		}
+
+		return null;
+	}
 }
