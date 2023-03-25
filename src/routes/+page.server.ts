@@ -17,17 +17,14 @@ export const load = (async (event) => {
 	const form = await superValidate(event, linkSchema);
 	const { session } = await event.parent();
 
-	if (session?.user) {
-		const links = await db.link.findMany({
-			where: {
-				user: {
-					email: session.user.email
-				}
-			},
-			orderBy: {
-				updated_at: 'desc'
-			}
-		});
+	if (session?.user?.email) {
+		const [links, err] = await linkService.getAllLinks(session.user.email);
+		if (err instanceof Error) {
+			return fail(500, {
+				form,
+				message: err.message
+			});
+		}
 
 		return { form, links };
 	}
@@ -47,7 +44,7 @@ export const actions: Actions = {
 		const { link, customName } = form.data;
 
 		if (customName) {
-			if (!session) {
+			if (!session?.user) {
 				return fail(401, {
 					message: 'You should sign in first',
 					form
