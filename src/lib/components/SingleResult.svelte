@@ -103,7 +103,7 @@
 			</Button>
 		</ButtonGroup>
 	</div>
-	<div use:autoAnimate={{ duration: 150 }}>
+	<div use:autoAnimate={{ duration: 100 }}>
 		{#if isHovered}
 			<div class="flex">
 				<svg
