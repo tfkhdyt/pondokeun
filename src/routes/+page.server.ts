@@ -61,15 +61,10 @@ export const actions: Actions = {
 				});
 			}
 
-			const isExist = await db.link.findFirst({
-				where: {
-					slug: customName
-				}
-			});
-
-			if (isExist) {
+			const err = await linkService.verifySlugAvailability(customName);
+			if (err instanceof Error) {
 				return fail(400, {
-					message: 'Custom slug has been used',
+					message: err.message,
 					form
 				});
 			}
@@ -80,13 +75,11 @@ export const actions: Actions = {
 			slug: customName,
 			email: session?.user?.email
 		});
-		if (err) {
-			if (err instanceof Error) {
-				return fail(400, {
-					message: err.message,
-					form
-				});
-			}
+		if (err instanceof Error) {
+			return fail(400, {
+				message: err.message,
+				form
+			});
 		}
 
 		return { form, addedLink, success: true };
