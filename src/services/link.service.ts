@@ -4,6 +4,7 @@ import type { LinkRepository } from '../repositories';
 
 interface ILinkService {
 	createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]>;
+	verifySlugAvailability(slug: string): Promise<Error | null>;
 }
 
 export default class LinkService implements ILinkService {
@@ -34,5 +35,11 @@ export default class LinkService implements ILinkService {
 		}
 
 		return [addedLink, null];
+	}
+
+	async verifySlugAvailability(slug: string): Promise<Error | null> {
+		const err = await this.linkRepo.verifySlugAvailability(slug);
+
+		return err;
 	}
 }
