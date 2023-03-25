@@ -17,6 +17,7 @@ specifiers:
   eslint-config-prettier: ^8.8.0
   eslint-plugin-simple-import-sort: ^10.0.0
   eslint-plugin-svelte3: ^4.0.0
+  eslint-plugin-unused-imports: ^2.0.0
   flowbite: ^1.6.4
   flowbite-svelte: ^0.34.2
   flowbite-svelte-blocks: ^0.3.6
@@ -56,6 +57,7 @@ devDependencies:
   eslint-config-prettier: 8.8.0_eslint@8.36.0
   eslint-plugin-simple-import-sort: 10.0.0_eslint@8.36.0
   eslint-plugin-svelte3: 4.0.0_wzem237sbvnwe7n34ytc5phasy
+  eslint-plugin-unused-imports: 2.0.0_pjgbsoxltfjhart6hcjsvw66hu
   flowbite: 1.6.4
   flowbite-svelte: 0.34.2_ke46fu5ukh6a47rqdgrle26l3a
   flowbite-svelte-blocks: 0.3.6_duukgfmkfcamrwpmyayt3hjjqu
@@ -1092,6 +1094,26 @@ packages:
     dependencies:
       eslint: 8.36.0
       svelte: 3.57.0
+    dev: true
+
+  /eslint-plugin-unused-imports/2.0.0_pjgbsoxltfjhart6hcjsvw66hu:
+    resolution: {integrity: sha512-3APeS/tQlTrFa167ThtP0Zm0vctjr4M44HMpeg1P4bK6wItarumq0Ma82xorMKdFsWpphQBlRPzw/pxiVELX1A==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': ^5.0.0
+      eslint: ^8.0.0
+    peerDependenciesMeta:
+      '@typescript-eslint/eslint-plugin':
+        optional: true
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 5.56.0_2hcjazgfnbtq42tcc73br2vup4
+      eslint: 8.36.0
+      eslint-rule-composer: 0.3.0
+    dev: true
+
+  /eslint-rule-composer/0.3.0:
+    resolution: {integrity: sha512-bt+Sh8CtDmn2OajxvNO+BX7Wn4CIWMpTRm3MaiKPCQcnnlm0CS2mhui6QaoeQugs+3Kj2ESKEEGJUdVafwhiCg==}
+    engines: {node: '>=4.0.0'}
     dev: true
 
   /eslint-scope/5.1.1:
