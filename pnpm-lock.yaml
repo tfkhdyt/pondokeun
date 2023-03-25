@@ -18,6 +18,7 @@ specifiers:
   eslint-plugin-svelte3: ^4.0.0
   flowbite: ^1.6.4
   flowbite-svelte: ^0.34.2
+  flowbite-svelte-blocks: ^0.3.6
   postcss: ^8.4.21
   prettier: ^2.8.6
   prettier-plugin-svelte: ^2.10.0
@@ -25,6 +26,7 @@ specifiers:
   svelte: ^3.57.0
   svelte-check: ^3.1.4
   svelte-french-toast: 1.0.4-beta.0
+  svelte-heros: ^3.1.0
   sveltekit-superforms: ^0.6.2
   tailwindcss: ^3.2.7
   tslib: ^2.5.0
@@ -54,12 +56,14 @@ devDependencies:
   eslint-plugin-svelte3: 4.0.0_wzem237sbvnwe7n34ytc5phasy
   flowbite: 1.6.4
   flowbite-svelte: 0.34.2_ke46fu5ukh6a47rqdgrle26l3a
+  flowbite-svelte-blocks: 0.3.6_duukgfmkfcamrwpmyayt3hjjqu
   postcss: 8.4.21
   prettier: 2.8.6
   prettier-plugin-svelte: 2.10.0_bzjcbf5vweu43cmyrxgltnmf74
   prisma: 4.11.0
   svelte: 3.57.0
   svelte-check: 3.1.4_sd5d5bwhwct4qrvp7ra4wv5wou
+  svelte-heros: 3.1.0_svelte@3.57.0
   sveltekit-superforms: 0.6.2_vnva2uj6ln66g45532zl7rs5ry
   tailwindcss: 3.2.7_postcss@8.4.21
   tslib: 2.5.0
@@ -1254,6 +1258,23 @@ packages:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: true
 
+  /flowbite-svelte-blocks/0.3.6_duukgfmkfcamrwpmyayt3hjjqu:
+    resolution: {integrity: sha512-sydRqW++yqIVFRML6eVic7NV21PaASUJ8jk5+tREErK6PjbmrzmXYabz1hAsqvNO/Jsm143AFWl6q6pu8MkWcw==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    peerDependencies:
+      '@popperjs/core': ^2.11.6
+      classnames: ^2.3.2
+      flowbite: ^1.6.3
+      flowbite-svelte: ^0.30.0
+      svelte: ^3.54.0
+      svelte-heros: ^2.6.0
+    dependencies:
+      flowbite: 1.6.4
+      flowbite-svelte: 0.34.2_ke46fu5ukh6a47rqdgrle26l3a
+      svelte: 3.57.0
+      svelte-heros: 3.1.0_svelte@3.57.0
+    dev: true
+
   /flowbite-svelte/0.34.2_ke46fu5ukh6a47rqdgrle26l3a:
     resolution: {integrity: sha512-Botfv97qQq0bPiK0vLVx0KIttFHj5iQ38a+krwBlqkTTzRO3zeUuRAZPg6A/FVLF5swXU8zb5c37Kls21vGJHA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -2113,6 +2134,14 @@ packages:
       svelte: 3.57.0
       svelte-writable-derived: 3.0.1_svelte@3.57.0
     dev: false
+
+  /svelte-heros/3.1.0_svelte@3.57.0:
+    resolution: {integrity: sha512-SW5GPH/hDsuzNcdHVfpqbED37XvAl1k4Ksvec3fyPwkb30NtvO/GYjeaUHcDHrT/DjXhsVsoJJSnzJ1CEhx3ww==}
+    peerDependencies:
+      svelte: ^3.54.0
+    dependencies:
+      svelte: 3.57.0
+    dev: true
 
   /svelte-hmr/0.15.1_svelte@3.57.0:
     resolution: {integrity: sha512-BiKB4RZ8YSwRKCNVdNxK/GfY+r4Kjgp9jCLEy0DuqAKfmQtpL38cQK3afdpjw4sqSs4PLi3jIPJIFp259NkZtA==}
