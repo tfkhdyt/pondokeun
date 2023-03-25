@@ -17,7 +17,8 @@ export const load = (async (event) => {
 	event.depends('links');
 
 	const form = await superValidate(event, schema);
-	const session = await event.locals.getSession();
+	const { session } = await event.parent();
+	// const session = await event.locals.getSession();
 
 	if (session?.user) {
 		const links = await db.link.findMany({
@@ -25,6 +26,9 @@ export const load = (async (event) => {
 				user: {
 					email: session.user.email
 				}
+			},
+			orderBy: {
+				updated_at: 'desc'
 			}
 		});
 
