@@ -1,18 +1,12 @@
-import { z } from 'zod';
-import { superValidate } from 'sveltekit-superforms/server';
 import { fail, type Actions } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms/server';
 
-import { db } from '../lib/database/prisma';
+import { db } from '$db/prisma';
+import { linkSchema } from '$entities/link.entity';
+import LinkRepositoryPostgres from '$repositories/link/linkPG.repository';
+import LinkService from '$services/link.service';
+
 import type { PageServerLoad } from './$types';
-import LinkRepositoryPostgres from '../repositories/link/postgres';
-import LinkService from '../services/link.service';
-
-const schema = z.object({
-	link: z
-		.string({ required_error: 'Link is required!', invalid_type_error: 'Invalid type' })
-		.url({ message: 'Invalid url' }),
-	customName: z.string().optional()
-});
 
 const linkRepo = new LinkRepositoryPostgres(db);
 const linkService = new LinkService(linkRepo);
@@ -20,9 +14,8 @@ const linkService = new LinkService(linkRepo);
 export const load = (async (event) => {
 	event.depends('links');
 
-	const form = await superValidate(event, schema);
+	const form = await superValidate(event, linkSchema);
 	const { session } = await event.parent();
-	// const session = await event.locals.getSession();
 
 	if (session?.user) {
 		const links = await db.link.findMany({
@@ -45,7 +38,7 @@ export const load = (async (event) => {
 export const actions: Actions = {
 	default: async (event) => {
 		const session = await event.locals.getSession();
-		const form = await superValidate(event, schema);
+		const form = await superValidate(event, linkSchema);
 
 		if (!form.valid) {
 			return fail(400, { form, message: 'Invalid input' });
