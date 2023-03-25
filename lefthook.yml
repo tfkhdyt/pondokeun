@@ -3,16 +3,16 @@ pre-commit:
   commands:
     eslint:
       glob: '*.{ts,js,svelte}'
-      run: eslint --fix {staged_files}
+      run: pnpm eslint --fix {staged_files}
     prettier:
       glob: '*.{html,css,ts,svelte}'
-      run: prettier --plugin-search-dir . --write {staged_files}
+      run: pnpm prettier --plugin-search-dir . --write {staged_files}
 pre-push:
   parallel: true
   commands:
     eslint:
       glob: '*.{ts,js,svelte}'
-      run: eslint --fix {push_files}
+      run: pnpm eslint --fix {push_files}
     prettier:
       glob: '*.{html,css,ts,svelte}'
-      run: prettier --plugin-search-dir . --write {push_files}
+      run: pnpm prettier --plugin-search-dir . --write {push_files}
