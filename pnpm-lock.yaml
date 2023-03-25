@@ -12,6 +12,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.56.0
   autoprefixer: ^10.4.14
   clsx: ^1.2.1
+  dayjs: ^1.11.7
   eslint: ^8.36.0
   eslint-config-prettier: ^8.8.0
   eslint-plugin-svelte3: ^4.0.0
@@ -38,6 +39,7 @@ dependencies:
   '@formkit/auto-animate': 1.0.0-beta.6
   '@next-auth/prisma-adapter': 1.0.5_@prisma+client@4.11.0
   '@prisma/client': 4.11.0_prisma@4.11.0
+  dayjs: 1.11.7
   svelte-french-toast: 1.0.4-beta.0_svelte@3.57.0
 
 devDependencies:
@@ -924,6 +926,10 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
     dev: true
+
+  /dayjs/1.11.7:
+    resolution: {integrity: sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==}
+    dev: false
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
