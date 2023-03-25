@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { signOut } from '@auth/sveltekit/client';
 	import {
 		Avatar,
@@ -11,8 +10,10 @@
 		NavBrand,
 		NavHamburger,
 		NavLi,
-		NavUl
+		NavUl,
 	} from 'flowbite-svelte';
+
+	import { page } from '$app/stores';
 
 	$: currentPath = $page.url.pathname;
 </script>
@@ -22,8 +23,7 @@
 		<img
 			src="https://flowbite.com/docs/images/logo.svg"
 			class="mr-3 h-6 sm:h-9"
-			alt="Flowbite Logo"
-		/>
+			alt="Flowbite Logo" />
 		<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
 			Pondokeun
 		</span>
@@ -36,8 +36,8 @@
 					<Dropdown triggeredBy="#user-drop">
 						<DropdownHeader>
 							<span class="block text-sm font-medium">{$page.data.session.user?.name}</span>
-							<span class="block text-sm font-light truncate">{$page.data.session.user?.email}</span
-							>
+							<span class="block text-sm font-light truncate"
+								>{$page.data.session.user?.email}</span>
 						</DropdownHeader>
 						<DropdownItem on:click={() => signOut()} class="flex">
 							<svg
@@ -46,16 +46,13 @@
 								viewBox="0 0 24 24"
 								stroke-width="1.5"
 								stroke="currentColor"
-								class="mr-1 w-5 h-5"
-							>
+								class="mr-1 w-5 h-5">
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
-									d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-								/>
+									d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
 							</svg>
-							Sign Out</DropdownItem
-						>
+							Sign Out</DropdownItem>
 					</Dropdown>
 				{/if}
 			</div>
@@ -67,16 +64,13 @@
 					viewBox="0 0 24 24"
 					stroke-width="1.5"
 					stroke="currentColor"
-					class="mr-1 w-5 h-5"
-				>
+					class="mr-1 w-5 h-5">
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
-						d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-					/>
+						d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
 				</svg>
-				Sign In</Button
-			>
+				Sign In</Button>
 		{/if}
 		<NavHamburger on:click={toggle} />
 	</div>

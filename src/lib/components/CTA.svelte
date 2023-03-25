@@ -12,7 +12,6 @@
 	<div class="flex justify-center pt-1 space-x-2 md:pt-2">
 		<Button size="md" href="/signin" pill>Get Started for Free</Button>
 		<Button size="md" href="https://github.com/tfkhdyt/pondokeun" target="_blank" pill color="light"
-			>Self Host from Source</Button
-		>
+			>Self Host from Source</Button>
 	</div>
 </div>

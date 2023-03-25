@@ -12,10 +12,10 @@ export const DELETE: RequestHandler = async (event) => {
 		return json(
 			{
 				status: 'fail',
-				message: 'You should login first'
+				message: 'You should login first',
 			},
 			{
-				status: 401
+				status: 401,
 			}
 		);
 	}
@@ -27,10 +27,10 @@ export const DELETE: RequestHandler = async (event) => {
 			return json(
 				{
 					status: 'fail',
-					message: error.message
+					message: error.message,
 				},
 				{
-					status: 404
+					status: 404,
 				}
 			);
 		}
@@ -43,10 +43,10 @@ export const DELETE: RequestHandler = async (event) => {
 			return json(
 				{
 					status: 'fail',
-					message: error.message
+					message: error.message,
 				},
 				{
-					status: 403
+					status: 403,
 				}
 			);
 		}
@@ -54,18 +54,18 @@ export const DELETE: RequestHandler = async (event) => {
 
 	const result = await db.link.delete({
 		where: {
-			slug
-		}
+			slug,
+		},
 	});
 
 	if (!result) {
 		return json(
 			{
 				status: 'fail',
-				message: `Failed to delete /${slug} link`
+				message: `Failed to delete /${slug} link`,
 			},
 			{
-				status: 500
+				status: 500,
 			}
 		);
 	}
@@ -73,7 +73,7 @@ export const DELETE: RequestHandler = async (event) => {
 	return json({
 		status: 'success',
 		message: `/${slug} link has been deleted`,
-		deletedLink: result
+		deletedLink: result,
 	});
 };
 
@@ -82,9 +82,9 @@ async function verifyLinkOwner(slug: string, userEmail: string) {
 		where: {
 			slug,
 			user: {
-				email: userEmail
-			}
-		}
+				email: userEmail,
+			},
+		},
 	});
 
 	if (!result) {
@@ -95,8 +95,8 @@ async function verifyLinkOwner(slug: string, userEmail: string) {
 async function verifyLinkAvailability(slug: string) {
 	const result = await db.link.findUnique({
 		where: {
-			slug
-		}
+			slug,
+		},
 	});
 
 	if (!result) {

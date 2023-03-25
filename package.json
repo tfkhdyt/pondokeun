@@ -21,6 +21,7 @@
 		"clsx": "^1.2.1",
 		"eslint": "^8.36.0",
 		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-simple-import-sort": "^10.0.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"flowbite": "^1.6.4",
 		"flowbite-svelte": "^0.34.2",

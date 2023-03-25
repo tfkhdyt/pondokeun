@@ -9,13 +9,13 @@ export const load = (async ({ params }) => {
 
 	const link = await db.link.findFirst({
 		where: {
-			slug
-		}
+			slug,
+		},
 	});
 
 	if (!link) {
 		return {
-			message: 'Page not found'
+			message: 'Page not found',
 		};
 	}
 

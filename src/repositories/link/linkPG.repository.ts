@@ -7,7 +7,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 
 	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, Error | null]> {
 		const addedLink = await this.db.link.create({
-			data: payload
+			data: payload,
 		});
 
 		if (!addedLink) {
@@ -20,8 +20,8 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 	async verifySlugAvailability(slug: string): Promise<Error | null> {
 		const link = await this.db.link.findFirst({
 			where: {
-				slug
-			}
+				slug,
+			},
 		});
 
 		if (link) {
@@ -38,12 +38,12 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 			links = await this.db.link.findMany({
 				where: {
 					user: {
-						email
-					}
+						email,
+					},
 				},
 				orderBy: {
-					updated_at: 'desc'
-				}
+					updated_at: 'desc',
+				},
 			});
 		} catch (error) {
 			return [links, new Error('Failed to fetch all links')];

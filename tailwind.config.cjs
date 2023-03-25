@@ -3,11 +3,11 @@ module.exports = {
 	content: [
 		'./src/**/*.{html,js,svelte,ts}',
 		'./node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}',
-		'./node_modules/flowbite-svelte-blocks/**/*.{html,js,svelte,ts}'
+		'./node_modules/flowbite-svelte-blocks/**/*.{html,js,svelte,ts}',
 	],
 	theme: {
-		extend: {}
+		extend: {},
 	},
 	plugins: [require('flowbite/plugin')],
-	darkMode: 'class'
+	darkMode: 'class',
 };

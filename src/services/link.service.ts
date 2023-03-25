@@ -17,7 +17,7 @@ export default class LinkService implements ILinkService {
 
 		let newLink: Prisma.LinkCreateInput = {
 			link: payload.link,
-			slug: payload.slug
+			slug: payload.slug,
 		};
 
 		if (payload.email) {
@@ -25,9 +25,9 @@ export default class LinkService implements ILinkService {
 				...newLink,
 				user: {
 					connect: {
-						email: payload.email
-					}
-				}
+						email: payload.email,
+					},
+				},
 			};
 		}
 

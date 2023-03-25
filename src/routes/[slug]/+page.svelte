@@ -29,16 +29,13 @@
 						viewBox="0 0 24 24"
 						stroke-width="1.5"
 						stroke="currentColor"
-						class="mr-1 w-5 h-5"
-					>
+						class="mr-1 w-5 h-5">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-						/>
+							d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
 					</svg>
-					Back to Homepage</Button
-				>
+					Back to Homepage</Button>
 			</svelte:fragment>
 		</Page404>
 	{:else}

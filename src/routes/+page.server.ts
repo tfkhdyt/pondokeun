@@ -1,4 +1,4 @@
-import { fail, type Actions } from '@sveltejs/kit';
+import { type Actions, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 
 import { db } from '$db/prisma';
@@ -22,7 +22,7 @@ export const load = (async (event) => {
 		if (err instanceof Error) {
 			return fail(500, {
 				form,
-				message: err.message
+				message: err.message,
 			});
 		}
 
@@ -47,7 +47,7 @@ export const actions: Actions = {
 			if (!session?.user) {
 				return fail(401, {
 					message: 'You should sign in first',
-					form
+					form,
 				});
 			}
 
@@ -55,7 +55,7 @@ export const actions: Actions = {
 			if (err instanceof Error) {
 				return fail(400, {
 					message: err.message,
-					form
+					form,
 				});
 			}
 		}
@@ -63,15 +63,15 @@ export const actions: Actions = {
 		const [addedLink, err] = await linkService.createLink({
 			link,
 			slug: customName,
-			email: session?.user?.email
+			email: session?.user?.email,
 		});
 		if (err instanceof Error) {
 			return fail(400, {
 				message: err.message,
-				form
+				form,
 			});
 		}
 
 		return { form, addedLink, success: true };
-	}
+	},
 };

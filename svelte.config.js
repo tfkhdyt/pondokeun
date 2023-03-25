@@ -14,9 +14,9 @@ const config = {
 			$dto: 'src/dto',
 			$entities: 'src/entities',
 			$repositories: 'src/repositories',
-			$services: 'src/services'
-		}
-	}
+			$services: 'src/services',
+		},
+	},
 };
 
 export default config;
