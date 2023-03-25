@@ -1,5 +1,7 @@
-import { db } from '$lib/database/prisma';
 import { redirect } from '@sveltejs/kit';
+
+import { db } from '$db/prisma';
+
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ params }) => {

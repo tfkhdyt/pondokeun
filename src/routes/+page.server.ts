@@ -1,86 +1,77 @@
 import { fail, type Actions } from '@sveltejs/kit';
-import { Prisma } from '@prisma/client';
-import { db } from '../lib/database/prisma';
+import { superValidate } from 'sveltekit-superforms/server';
+
+import { db } from '$db/prisma';
+import { linkSchema } from '$entities/link.entity';
+import LinkRepositoryPostgres from '$repositories/link/linkPG.repository';
+import LinkService from '$services/link.service';
+
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async (event) => {
-  event.depends('links');
+const linkRepo = new LinkRepositoryPostgres(db);
+const linkService = new LinkService(linkRepo);
 
-	const session = await event.locals.getSession();
-	const links = await db.link.findMany({
-		where: {
-			user: {
-				email: session?.user?.email
-			}
+export const load = (async (event) => {
+	event.depends('links');
+
+	const form = await superValidate(event, linkSchema);
+	const { session } = await event.parent();
+
+	if (session?.user?.email) {
+		const [links, err] = await linkService.getAllLinks(session.user.email);
+		if (err instanceof Error) {
+			return fail(500, {
+				form,
+				message: err.message
+			});
 		}
-	});
 
-	return { links };
-};
+		return { form, links };
+	}
+
+	return { form };
+}) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	default: async (event) => {
 		const session = await event.locals.getSession();
-		const data = await event.request.formData();
-		const link = data.get('link') as string;
-		const customName = data.get('customName') as string;
+		const form = await superValidate(event, linkSchema);
 
-		if (!link) {
-			return fail(400, { status: 'fail', message: "Link shouldn't be empty" });
+		if (!form.valid) {
+			return fail(400, { form, message: 'Invalid input' });
 		}
+
+		const { link, customName } = form.data;
 
 		if (customName) {
-			if (!session) {
+			if (!session?.user) {
 				return fail(401, {
-					status: 'fail',
-					message: 'You should sign in first'
+					message: 'You should sign in first',
+					form
 				});
 			}
 
-			const isExist = await db.link.findFirst({
-				where: {
-					slug: customName
-				}
+			const err = await linkService.verifySlugAvailability(customName);
+			if (err instanceof Error) {
+				return fail(400, {
+					message: err.message,
+					form
+				});
+			}
+		}
+
+		const [addedLink, err] = await linkService.createLink({
+			link,
+			slug: customName,
+			email: session?.user?.email
+		});
+		if (err instanceof Error) {
+			return fail(400, {
+				message: err.message,
+				form
 			});
-
-			if (isExist) {
-				return fail(404, {
-					status: 'fail',
-					message: 'Custom name is already used'
-				});
-			}
 		}
 
-		let newLink: Prisma.LinkCreateInput = {
-			slug: customName ?? crypto.randomUUID().slice(0, 8),
-			link
-		};
-
-		if (session?.user?.email) {
-			newLink = {
-				...newLink,
-				user: {
-					connect: {
-						email: session.user.email
-					}
-				}
-			};
-		}
-
-		try {
-			const addedLink = await db.link.create({
-				data: newLink
-			});
-
-			return { addedLink, status: 'success' };
-		} catch (err) {
-			console.error(err);
-			if (err instanceof Prisma.PrismaClientKnownRequestError) {
-				return fail(500, {
-					status: 'error',
-					message: err.message
-				});
-			}
-		}
+		return { form, addedLink, success: true };
 	}
 };

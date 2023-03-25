@@ -1,150 +1,97 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import autoAnimate from '@formkit/auto-animate';
+	import { Button, Helper, Input, Toggle } from 'flowbite-svelte';
+	import toast from 'svelte-french-toast';
+	import { superForm } from 'sveltekit-superforms/client';
+
 	import { page } from '$app/stores';
+	import CTA from '$lib/components/CTA.svelte';
+	import SingleResult from '$lib/components/SingleResult.svelte';
 
-	import Alert from '$lib/components/Alert.svelte';
-	import NormalButton from '$lib/components/Buttons/NormalButton.svelte';
-	import Card from '$lib/components/Card.svelte';
-	import Header1 from '$lib/components/Headers/Header1.svelte';
-	import Hr from '$lib/components/Hr.svelte';
-	import InputField from '$lib/components/InputField.svelte';
-	import MyLinks from '$lib/components/MyLinks.svelte';
-	import Profile from '$lib/components/Profile.svelte';
+	import type { ActionData, PageData } from './$types';
 
-	import { signIn } from '@auth/sveltekit/client';
-	import { clsx } from 'clsx';
-
-	import type { ActionData, PageServerData } from './$types';
-
+	export let data: PageData;
 	export let form: ActionData;
-	export let data: PageServerData;
 
-	let isCopied = false;
-	let useCustomName = false;
+	const { form: formS, errors, constraints, enhance } = superForm(data.form);
 
-	$: session = $page.data.session;
+	let isUseCustomSlug = false;
 
-	const appUrl = $page.url.origin;
-
-	async function copyText(text: string) {
-		await navigator.clipboard.writeText(text);
-		isCopied = true;
-
-		setTimeout(() => {
-			isCopied = false;
-		}, 1500);
+	$: if (!form?.success && form?.message) {
+		toast.error(form.message, { position: 'top-right' });
 	}
-
 </script>
 
 <svelte:head>
 	<title>Pondokeun</title>
 </svelte:head>
 
-<!-- svelte-ignore a11y-no-redundant-roles -->
+<CTA />
+<form method="POST" use:enhance class="mt-8" use:autoAnimate>
+	<label for="link" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+		>Paste a link to shorten it</label
+	>
 
-<main class="grid place-items-center min-h-screen">
-	<div class="grid {session && 'grid-cols-1 lg:grid-cols-3'} lg:items-start">
-		<Card customClass="lg:w-96">
-			<Header1>Pondokeun</Header1>
-			<form
-				method="POST"
-				use:enhance={() => {
-					return async ({ update }) => {
-						await update({ reset: false });
-					};
-				}}
-			>
-				<div class="flex space-x-2 mb-4">
-					<InputField
-						placeholder="Enter the link here"
-						name="link"
-						type="url"
-						customClass="w-4/6"
-					/>
+	<Input
+		id="link"
+		placeholder="Paste a link to shorten it"
+		size="lg"
+		name="link"
+		bind:value={$formS.link}
+		{...$constraints.link}
+		color={$errors.link || (form?.success && form?.message) ? 'red' : 'base'}
+	>
+		<svg
+			slot="left"
+			aria-hidden="true"
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="currentColor"
+			class="w-6 h-6 text-gray-500 dark:text-gray-400"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+			/>
+		</svg>
+		<Button slot="right" size="md" type="submit">Shorten</Button>
+	</Input>
 
-					<NormalButton customClass="bg-yellow-500 hover:bg-red-500 active:bg-red-700 w-2/6"
-						>Shorten</NormalButton
-					>
-				</div>
-				<div class="flex items-center space-x-2">
-					<input
-						type="checkbox"
-						id="useCustomName"
-						name="useCustomName"
-						class="rounded-md disabled:opacity-50"
-						bind:checked={useCustomName}
-						disabled={!$page.data.session?.user}
-					/>
-					<label
-						for="useCustomName"
-						class={clsx(
-							$page.data.session?.user || 'opacity-50 line-through',
-							'dark:text-gray-300'
-						)}
-						title={!$page.data.session ? 'You should sign in first to use this feature' : undefined}
-					>
-						Custom slug
-					</label>
-				</div>
-
-				{#if useCustomName === true}
-					<InputField
-						placeholder="Enter the custom slug (Alphanumeric, hyphen, underscore)"
-						name="customName"
-						type="text"
-						customClass="mt-4 w-full"
-						pattern="[a-zA-Z0-9-_]+"
-					/>
-				{/if}
-			</form>
-
-			{#if form?.status === 'success'}
-				<Alert title="Here's your shortened link!" status="success">
-					<p class="mt-2 text-sm text-green-700 dark:text-white space-y-2">
-						<a
-							href="{appUrl}/{form?.addedLink?.slug}"
-							class="underline block"
-							target="_blank"
-							rel="noreferrer">{appUrl}/{form?.addedLink?.slug}</a
-						>
-						<button
-							class="bg-gray-200 text-gray-800 px-2 py-1 dark:bg-gray-800 dark:text-white rounded"
-							on:click={() => copyText(`${appUrl}/${form?.addedLink?.slug}`)}
-							>{isCopied ? 'Copied!' : 'Copy link'}</button
-						>
-					</p>
-				</Alert>
-			{:else if form?.status === 'error' || form?.status === 'fail'}
-				<Alert status="error" title="Failed to shorten link!">
-					<p class="mt-2 text-sm text-red-700 dark:text-white">
-						{form.message}
-					</p>
-				</Alert>
+	{#if $errors.link}
+		<Helper class="mt-2" color="red">{$errors.link.join(', ')}</Helper>
+	{/if}
+	{#if $page.data.session?.user}
+		<Toggle class="my-4" bind:checked={isUseCustomSlug}>Use custom slug</Toggle>
+		{#if isUseCustomSlug}
+			<Input
+				type="text"
+				placeholder="Your custom slug (Alphanumeric, hyphen, and underscore only)"
+				size="lg"
+				name="customName"
+				bind:value={$formS.customName}
+				{...$constraints.customName}
+				pattern="[a-zA-Z0-9_-]*"
+			/>
+			{#if $errors.customName}
+				<Helper class="mt-2" color="red">{$errors.customName.join(', ')}</Helper>
 			{/if}
-
-			{#if $page.data.session?.user}
-				<Hr label="Profile" />
-				<Profile
-					image={$page.data.session.user.image}
-					name={$page.data.session.user.name}
-					email={$page.data.session.user.email}
-				/>
-			{:else}
-				<Hr label="Sign in for more features" />
-				<div class="flex space-x-2">
-					<NormalButton customClass="bg-white w-1/2 hover:bg-gray-400 text-dark"
-						>Google</NormalButton
-					>
-					<NormalButton
-						customClass="bg-gray-800 w-1/2 hover:bg-gray-600 text-white"
-						onClick={() => signIn('github')}>GitHub</NormalButton
-					>
-				</div>
-			{/if}
-		</Card>
-		{#if session}
-			<MyLinks links={data.links} />
 		{/if}
-	</div>
-</main>
+	{/if}
+</form>
+
+<div class="mt-4 space-y-2" use:autoAnimate>
+	{#if form?.success === true && !$page.data.session}
+		<SingleResult
+			slug={form.addedLink.slug}
+			link={form.addedLink.link}
+			createdDate={form.addedLink.created_at}
+		/>
+	{:else if $page.data.session && data.links && data.links.length > 0}
+		{#each data.links as link (link.id)}
+			<SingleResult slug={link.slug} link={link.link} createdDate={link.created_at} />
+		{/each}
+	{/if}
+</div>
