@@ -30,4 +30,25 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 
 		return null;
 	}
+
+	async getAllLinks(email: string): Promise<[Link[], Error | null]> {
+		let links: Link[] = [];
+
+		try {
+			links = await this.db.link.findMany({
+				where: {
+					user: {
+						email
+					}
+				},
+				orderBy: {
+					updated_at: 'desc'
+				}
+			});
+		} catch (error) {
+			return [links, new Error('Failed to fetch all links')];
+		}
+
+		return [links, null];
+	}
 }
