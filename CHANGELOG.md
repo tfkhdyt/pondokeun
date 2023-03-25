@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.1.1 - 2023-03-25
+#### Bug Fixes
+- **(link-postgres)** change updated at property from snake case to camelCase - (81ef861) - tfkhdyt
+- **(root-page)** change created at property from snake_case to camelCase - (ff6f629) - tfkhdyt
+#### Refactoring
+- **(model)** add model name mapping, change created_at to createdAt - (91a3801) - tfkhdyt
+
+- - -
+
 ## 0.1.0 - 2023-03-25
 #### Bug Fixes
 - **(actions)** add message to every fail() - (92a0996) - tfkhdyt

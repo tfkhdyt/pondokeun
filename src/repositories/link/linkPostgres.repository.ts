@@ -42,7 +42,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 					},
 				},
 				orderBy: {
-					updated_at: 'desc',
+					updatedAt: 'desc',
 				},
 			});
 		} catch (error) {
