@@ -1,5 +1,7 @@
-import { db } from '$lib/database/prisma';
 import { json } from '@sveltejs/kit';
+
+import { db } from '$db/prisma';
+
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async (event) => {
