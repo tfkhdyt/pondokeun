@@ -34,14 +34,14 @@
 </script>
 
 <div
-	class="flex flex-col gap-4 p-4 text-sm text-blue-800 bg-blue-50 rounded-lg md:gap-0 dark:text-blue-400 dark:bg-gray-800"
+	class="flex flex-col gap-4 p-4 text-sm text-blue-800 bg-blue-50 rounded-lg md:gap-2 dark:text-blue-400 dark:bg-gray-800"
 	role="alert"
 	on:mouseenter={() => (isHovered = true)}
 	on:mouseleave={() => (isHovered = false)}
 >
 	<div class="flex flex-col gap-4 justify-between items-center w-full md:flex-row">
-		<div class="flex justify-between w-full md:w-4/6">
-			<div class="font-medium">{link}</div>
+		<div class="flex justify-between items-start w-full md:w-4/6">
+			<div class="w-4/6 font-medium" title={link}>{link}</div>
 			<A class="font-bold" href={completeUrl} target="_blank">/{slug}</A>
 		</div>
 		<ButtonGroup divClass="flex items-center">
