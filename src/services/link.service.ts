@@ -1,6 +1,7 @@
 import type { Link, Prisma } from '@prisma/client';
-import type { CreateLinkRequest } from '../dto/link.dto';
-import type { LinkRepository } from '../repositories';
+
+import type { CreateLinkRequest } from '$dto/link.dto';
+import type { LinkRepository } from '$repositories';
 
 interface ILinkService {
 	createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]>;

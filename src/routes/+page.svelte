@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import CTA from '$lib/components/CTA.svelte';
-	import SingleResult from '$lib/components/SingleResult.svelte';
 	import autoAnimate from '@formkit/auto-animate';
 	import { Button, Helper, Input, Toggle } from 'flowbite-svelte';
 	import toast from 'svelte-french-toast';
 	import { superForm } from 'sveltekit-superforms/client';
+
+	import { page } from '$app/stores';
+	import CTA from '$lib/components/CTA.svelte';
+	import SingleResult from '$lib/components/SingleResult.svelte';
+
 	import type { ActionData, PageData } from './$types';
 
 	export let data: PageData;

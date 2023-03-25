@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Card, Button } from 'flowbite-svelte';
 	import { signIn } from '@auth/sveltekit/client';
+	import { Card, Button } from 'flowbite-svelte';
 </script>
 
 <svelte:head>
