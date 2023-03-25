@@ -1,5 +1,6 @@
 import type { Link, Prisma, PrismaClient } from '@prisma/client';
-import type { LinkRepository } from '..';
+
+import type { LinkRepository } from '$repositories';
 
 export default class LinkRepositoryPostgres implements LinkRepository {
 	constructor(private readonly db: PrismaClient) {}
