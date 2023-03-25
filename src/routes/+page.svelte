@@ -66,11 +66,12 @@
 		{#if isUseCustomSlug}
 			<Input
 				type="text"
-				placeholder="Your custom slug"
+				placeholder="Your custom slug (Alphanumeric, hyphen, and underscore only)"
 				size="lg"
 				name="customName"
 				bind:value={$formS.customName}
 				{...$constraints.customName}
+				pattern="[a-zA-Z0-9_-]*"
 			/>
 			{#if $errors.customName}
 				<Helper class="mt-2" color="red">{$errors.customName.join(', ')}</Helper>
@@ -79,18 +80,16 @@
 	{/if}
 </form>
 
-{#if form?.success === true && !$page.data.session}
-	<div class="mt-4">
+<div class="mt-4 space-y-2" use:autoAnimate>
+	{#if form?.success === true && !$page.data.session}
 		<SingleResult
 			slug={form.addedLink.slug}
 			link={form.addedLink.link}
 			createdDate={form.addedLink.created_at}
 		/>
-	</div>
-{:else if $page.data.session && data.links && data.links.length > 0}
-	<div class="mt-4 space-y-2" use:autoAnimate>
+	{:else if $page.data.session && data.links && data.links.length > 0}
 		{#each data.links as link (link.id)}
 			<SingleResult slug={link.slug} link={link.link} createdDate={link.created_at} />
 		{/each}
-	</div>
-{/if}
+	{/if}
+</div>
