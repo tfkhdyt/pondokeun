@@ -32,7 +32,7 @@ export const load = (async (event) => {
 	return { form };
 }) satisfies PageServerLoad;
 
-export const actions: Actions = {
+export const actions = {
 	default: async (event) => {
 		const session = await event.locals.getSession();
 		const form = await superValidate(event, linkSchema);
@@ -74,4 +74,4 @@ export const actions: Actions = {
 
 		return { form, addedLink, success: true };
 	},
-};
+} satisfies Actions;
