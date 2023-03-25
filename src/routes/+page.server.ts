@@ -3,7 +3,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 
 import { db } from '$db/prisma';
 import { linkSchema } from '$entities/link.entity';
-import LinkRepositoryPostgres from '$repositories/link/linkPG.repository';
+import LinkRepositoryPostgres from '$repositories/link/linkPostgres.repository';
 import LinkService from '$services/link.service';
 
 import type { PageServerLoad } from './$types';
