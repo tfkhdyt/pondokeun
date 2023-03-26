@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.0 - 2023-03-26
+#### Features
+- **(delete)** add confirmation modal before deleting link - (2f63c0f) - tfkhdyt
+- **(root-page)** reset form if success - (1166e27) - tfkhdyt
+- **(signin-page)** change login button style - (faa40f2) - tfkhdyt
+#### Miscellaneous Chores
+- **(tailwind)** add line clamp plugin - (e7be3ad) - tfkhdyt
+
+- - -
+
 ## 0.1.1 - 2023-03-25
 #### Bug Fixes
 - **(link-postgres)** change updated at property from snake case to camelCase - (81ef861) - tfkhdyt
