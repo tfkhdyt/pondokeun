@@ -13,12 +13,15 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	const { form: formS, errors, constraints, enhance } = superForm(data.form);
-
 	let isUseCustomSlug = false;
+	const { form: formS, errors, constraints, enhance } = superForm(data.form);
 
 	$: if (!form?.success && form?.message) {
 		toast.error(form.message, { position: 'top-right' });
+	}
+
+	$: if (form?.success) {
+		formS.set({ link: '', customName: '' });
 	}
 </script>
 
