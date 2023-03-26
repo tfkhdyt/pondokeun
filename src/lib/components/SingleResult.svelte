@@ -3,10 +3,11 @@
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime';
 	import { A, Button, ButtonGroup, Tooltip } from 'flowbite-svelte';
-	import toast from 'svelte-french-toast';
 
-	import { invalidate } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { PUBLIC_APP_URL } from '$env/static/public';
+
+	import DeleteModal from './DeleteModal.svelte';
 
 	export let link: string;
 	export let slug: string;
@@ -15,23 +16,9 @@
 
 	$: completeUrl = `${PUBLIC_APP_URL}/${slug}`;
 	let isHovered = false;
+	let popupModal = false;
 
 	dayjs.extend(relativeTime);
-
-	const deleteLink = async () => {
-		const res = await fetch(`/api/links/${slug}`, {
-			method: 'DELETE',
-		});
-		const data = await res.json();
-
-		if (!res.ok) {
-			toast.error(data.message, { position: 'top-right' });
-			return;
-		}
-
-		toast.success(data.message, { position: 'top-right' });
-		invalidate('links');
-	};
 </script>
 
 <div
@@ -40,8 +27,10 @@
 	on:mouseenter={() => (isHovered = true)}
 	on:mouseleave={() => (isHovered = false)}>
 	<div class="flex flex-col gap-4 justify-between items-center w-full md:flex-row">
-		<div class="flex justify-between items-start w-full md:w-4/6">
-			<div class="w-4/6 font-medium" title={link}>{link}</div>
+		<div class="flex justify-between items-start w-full md:items-center md:w-4/6">
+			<div class="w-4/6 font-medium line-clamp-2" title={link}>
+				{link}
+			</div>
 			<A class="font-bold" href={completeUrl} target="_blank">/{slug}</A>
 		</div>
 		<ButtonGroup divClass="flex items-center">
@@ -64,7 +53,7 @@
 				Copy
 			</Button>
 			<Tooltip trigger="click" triggeredBy={`#copy-button-${slug}`}>Copied</Tooltip>
-			<Button>
+			<Button disabled={!$page.data.session?.user}>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -79,7 +68,7 @@
 				</svg>
 				Edit
 			</Button>
-			<Button color="red" on:click={deleteLink}>
+			<Button color="red" on:click={() => (popupModal = true)} disabled={!$page.data.session?.user}>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -122,3 +111,4 @@
 		{/if}
 	</div>
 </div>
+<DeleteModal bind:popupModal {slug} />
