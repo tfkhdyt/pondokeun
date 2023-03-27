@@ -1,23 +1,22 @@
 import { redirect } from '@sveltejs/kit';
 
-import { db } from '$db/prisma';
+import { container } from '$containers/inversify.container';
+import type { ILinkService } from '$services/link.service';
+import { TYPES } from '$types/inversify.type';
 
 import type { PageServerLoad } from './$types';
+
+const linkService = container.get<ILinkService>(TYPES.ILinkService);
 
 export const load = (async ({ params }) => {
 	const { slug } = params;
 
-	const link = await db.link.findFirst({
-		where: {
-			slug,
-		},
-	});
-
-	if (!link) {
+	const [link, err] = await linkService.getLinkBySlug(slug);
+	if (err instanceof Error) {
 		return {
-			message: 'Page not found',
+			message: err.message,
 		};
 	}
 
-	throw redirect(301, link.link);
+	throw redirect(301, link?.link as string);
 }) satisfies PageServerLoad;

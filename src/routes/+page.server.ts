@@ -1,15 +1,14 @@
 import { type Actions, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 
-import { db } from '$db/prisma';
+import { container } from '$containers/inversify.container';
 import { linkSchema } from '$entities/link.entity';
-import LinkRepositoryPostgres from '$repositories/link/linkPostgres.repository';
-import LinkService from '$services/link.service';
+import type { ILinkService } from '$services/link.service';
+import { TYPES } from '$types/inversify.type';
 
 import type { PageServerLoad } from './$types';
 
-const linkRepo = new LinkRepositoryPostgres(db);
-const linkService = new LinkService(linkRepo);
+const linkService = container.get<ILinkService>(TYPES.ILinkService);
 
 export const load = (async (event) => {
 	event.depends('links');
