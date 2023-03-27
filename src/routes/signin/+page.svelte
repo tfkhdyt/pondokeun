@@ -10,13 +10,15 @@
 	<title>Sign In | Pondokeun</title>
 </svelte:head>
 
-<Card class="mx-auto">
-	<h3 class="p-0 mb-4 text-xl font-bold text-gray-900 dark:text-white">Sign In</h3>
-	<form class="flex flex-col space-y-3">
-		<div class="my-4 space-y-3">
-			<GitHubSignInButton />
-			<GoogleSignInButton />
-			<FacebookSignInButton />
-		</div>
-	</form>
-</Card>
+<main>
+	<Card class="mx-auto">
+		<h3 class="p-0 mb-4 text-xl font-bold text-gray-900 dark:text-white">Sign In</h3>
+		<form class="flex flex-col space-y-3">
+			<div class="my-4 space-y-3">
+				<GitHubSignInButton />
+				<GoogleSignInButton />
+				<FacebookSignInButton />
+			</div>
+		</form>
+	</Card>
+</main>
