@@ -1,16 +1,24 @@
 import type { Link, Prisma } from '@prisma/client';
+import { inject, injectable } from 'inversify';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
 import type { LinkRepository } from '$repositories';
+import { TYPES } from '$types/inversify.type';
 
-interface ILinkService {
+export interface ILinkService {
 	createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]>;
 	verifySlugAvailability(slug: string): Promise<Error | null>;
 	getAllLinks(email: string): Promise<[Link[], Error | null]>;
+	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
 }
 
+@injectable()
 export default class LinkService implements ILinkService {
-	constructor(private readonly linkRepo: LinkRepository) {}
+	private linkRepo: LinkRepository;
+
+	constructor(@inject(TYPES.LinkRepository) linkRepo: LinkRepository) {
+		this.linkRepo = linkRepo;
+	}
 
 	async createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]> {
 		payload.slug = payload.slug ?? crypto.randomUUID().slice(0, 5);
@@ -49,5 +57,11 @@ export default class LinkService implements ILinkService {
 		const [links, err] = await this.linkRepo.getAllLinks(email);
 
 		return [links, err];
+	}
+
+	async getLinkBySlug(slug: string): Promise<[Link | null, Error | null]> {
+		const [link, err] = await this.linkRepo.getLinkBySlug(slug);
+
+		return [link, err];
 	}
 }

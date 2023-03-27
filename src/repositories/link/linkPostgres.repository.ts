@@ -1,9 +1,16 @@
 import type { Link, Prisma, PrismaClient } from '@prisma/client';
+import { inject, injectable } from 'inversify';
 
 import type { LinkRepository } from '$repositories';
+import { TYPES } from '$types/inversify.type';
 
+@injectable()
 export default class LinkRepositoryPostgres implements LinkRepository {
-	constructor(private readonly db: PrismaClient) {}
+	private db: PrismaClient;
+
+	constructor(@inject(TYPES.PrismaClient) db: PrismaClient) {
+		this.db = db;
+	}
 
 	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, Error | null]> {
 		const addedLink = await this.db.link.create({
@@ -50,5 +57,21 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		}
 
 		return [links, null];
+	}
+
+	async getLinkBySlug(slug: string): Promise<[Link | null, Error | null]> {
+		let link: Link | null = null;
+
+		try {
+			link = await this.db.link.findFirst({
+				where: {
+					slug,
+				},
+			});
+		} catch (error) {
+			return [link, new Error('Link is not found')];
+		}
+
+		return [link, null];
 	}
 }
