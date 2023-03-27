@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.3.0 - 2023-03-27
+#### Build system
+- **(deps)** update dependencies - (b9264e8) - tfkhdyt
+- **(deps)** install inversify - (fac60fc) - tfkhdyt
+#### Features
+- **(container)** setup DI container with inversify - (8368cbc) - tfkhdyt
+- **(routes)** implement DI container - (28a53ff) - tfkhdyt
+- add getLinkBySlug() - (e3ab670) - tfkhdyt
+#### Refactoring
+- **(signin)** create component for sign in buttons - (ec9e3b0) - tfkhdyt
+
+- - -
+
 ## 0.2.0 - 2023-03-26
 #### Features
 - **(delete)** add confirmation modal before deleting link - (2f63c0f) - tfkhdyt
