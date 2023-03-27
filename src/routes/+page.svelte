@@ -14,7 +14,14 @@
 	export let form: ActionData;
 
 	let isUseCustomSlug = false;
-	const { form: formS, errors, constraints, enhance } = superForm(data.form);
+	const {
+		form: formS,
+		errors,
+		constraints,
+		enhance,
+	} = superForm(data.form, {
+		taintedMessage: false,
+	});
 
 	$: if (!form?.success && form?.message) {
 		toast.error(form.message, { position: 'top-right' });
