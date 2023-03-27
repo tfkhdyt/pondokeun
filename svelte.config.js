@@ -10,11 +10,13 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
+			$containers: 'src/containers',
 			$db: 'src/db',
 			$dto: 'src/dto',
 			$entities: 'src/entities',
 			$repositories: 'src/repositories',
 			$services: 'src/services',
+			$types: 'src/types',
 		},
 	},
 };
