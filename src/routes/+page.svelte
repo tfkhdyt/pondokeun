@@ -1,7 +1,7 @@
 <script lang="ts">
 	import autoAnimate from '@formkit/auto-animate';
 	import type { Link } from '@prisma/client';
-	import { Button, FloatingLabelInput, Helper, Input, Toggle } from 'flowbite-svelte';
+	import { Button, FloatingLabelInput, Helper, Input, Select, Toggle } from 'flowbite-svelte';
 	import toast from 'svelte-french-toast';
 	import { superForm } from 'sveltekit-superforms/client';
 
@@ -15,10 +15,33 @@
 	export let form: ActionData;
 
 	let isUseCustomSlug = false;
+	let sortCategory = 'updatedDate-desc';
+	let sortCategories = [
+		{ value: 'updatedDate-desc', name: 'Updated date (descending)' },
+		{ value: 'updatedDate-asc', name: 'Updated date (ascending)' },
+		{ value: 'createdDate-desc', name: 'Created date (descending)' },
+		{ value: 'createdDate-asc', name: 'Created date (ascending)' },
+		{ value: 'slug-desc', name: 'Slug (descending)' },
+		{ value: 'slug-asc', name: 'Slug (ascending)' },
+	];
 	let searchQuery = '';
-	$: filteredData = data?.links?.filter(
-		(each) => each.slug.includes(searchQuery) || each.link.includes(searchQuery)
-	) as Link[];
+	$: filteredData = data?.links
+		?.filter((each) => each.slug.includes(searchQuery) || each.link.includes(searchQuery))
+		.sort((a, b) => {
+			if (sortCategory === sortCategories[1].value) {
+				return a.updatedAt.getTime() - b.updatedAt.getTime();
+			} else if (sortCategory === sortCategories[2].value) {
+				return b.createdAt.getTime() - a.createdAt.getTime();
+			} else if (sortCategory === sortCategories[3].value) {
+				return a.createdAt.getTime() - b.createdAt.getTime();
+			} else if (sortCategory === sortCategories[4].value) {
+				return b.slug.localeCompare(a.slug);
+			} else if (sortCategory === sortCategories[5].value) {
+				return a.slug.localeCompare(b.slug);
+			} else {
+				return b.updatedAt.getTime() - a.updatedAt.getTime();
+			}
+		}) as Link[];
 
 	const {
 		form: formS,
@@ -106,20 +129,34 @@
 				link={form.addedLink.link}
 				createdDate={form.addedLink.createdAt}
 				updatedDate={form.addedLink.updatedAt} />
-		{:else if $page.data.session && filteredData.length > 0}
-			<FloatingLabelInput
-				id="search"
-				name="search"
-				type="text"
-				label="Search link"
-				bind:value={searchQuery} />
-			{#each filteredData as link (link.id)}
-				<SingleResult
-					slug={link.slug}
-					link={link.link}
-					createdDate={link.createdAt}
-					updatedDate={link.updatedAt} />
-			{/each}
+		{:else if $page.data.session}
+			<div class="flex gap-2 items-center">
+				<div class="grow">
+					<FloatingLabelInput
+						id="search"
+						name="search"
+						type="text"
+						label="Search link"
+						bind:value={searchQuery} />
+				</div>
+				<div class="w-2/6">
+					<Select
+						id="category"
+						underline
+						items={sortCategories}
+						bind:value={sortCategory}
+						underlineClass="text-gray-500 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
+				</div>
+			</div>
+			{#if filteredData.length > 0}
+				{#each filteredData as link (link.id)}
+					<SingleResult
+						slug={link.slug}
+						link={link.link}
+						createdDate={link.createdAt}
+						updatedDate={link.updatedAt} />
+				{/each}
+			{/if}
 		{/if}
 	</div>
 </main>
