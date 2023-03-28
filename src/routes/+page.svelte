@@ -130,8 +130,8 @@
 				createdDate={form.addedLink.createdAt}
 				updatedDate={form.addedLink.updatedAt} />
 		{:else if $page.data.session}
-			<div class="flex gap-2 items-center">
-				<div class="grow">
+			<div class="flex flex-col gap-2 items-center md:flex-row">
+				<div class="w-full md:w-auto grow">
 					<FloatingLabelInput
 						id="search"
 						name="search"
@@ -139,7 +139,7 @@
 						label="Search link"
 						bind:value={searchQuery} />
 				</div>
-				<div class="w-2/6">
+				<div class="w-full md:w-2/6">
 					<Select
 						id="category"
 						underline
