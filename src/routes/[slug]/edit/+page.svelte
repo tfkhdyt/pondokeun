@@ -60,6 +60,7 @@
 			<Input
 				type="text"
 				name="customName"
+				placeholder="Your custom slug (Alphanumeric, hyphen, and underscore only)"
 				id="slug"
 				size="md"
 				bind:value={$formS.customName}
