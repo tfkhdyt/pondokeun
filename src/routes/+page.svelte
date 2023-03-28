@@ -1,5 +1,6 @@
 <script lang="ts">
 	import autoAnimate from '@formkit/auto-animate';
+	import type { Link } from '@prisma/client';
 	import { Button, FloatingLabelInput, Helper, Input, Toggle } from 'flowbite-svelte';
 	import toast from 'svelte-french-toast';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -15,6 +16,10 @@
 
 	let isUseCustomSlug = false;
 	let searchQuery = '';
+	$: filteredData = data?.links?.filter(
+		(each) => each.slug.includes(searchQuery) || each.link.includes(searchQuery)
+	) as Link[];
+
 	const {
 		form: formS,
 		errors,
@@ -101,14 +106,14 @@
 				link={form.addedLink.link}
 				createdDate={form.addedLink.createdAt}
 				updatedDate={form.addedLink.updatedAt} />
-		{:else if $page.data.session && data.links && data.links.length > 0}
+		{:else if $page.data.session && filteredData.length > 0}
 			<FloatingLabelInput
 				id="search"
 				name="search"
 				type="text"
 				label="Search link"
 				bind:value={searchQuery} />
-			{#each data.links.filter((each) => each.slug.includes(searchQuery) || each.link.includes(searchQuery)) as link (link.id)}
+			{#each filteredData as link (link.id)}
 				<SingleResult
 					slug={link.slug}
 					link={link.link}
