@@ -145,6 +145,7 @@
 						underline
 						items={sortCategories}
 						bind:value={sortCategory}
+						placeholder="Sort by ..."
 						underlineClass="text-gray-500 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
 				</div>
 			</div>
