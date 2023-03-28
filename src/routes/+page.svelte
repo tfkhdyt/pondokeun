@@ -1,6 +1,6 @@
 <script lang="ts">
 	import autoAnimate from '@formkit/auto-animate';
-	import { Button, Helper, Input, Toggle } from 'flowbite-svelte';
+	import { Button, FloatingLabelInput, Helper, Input, Toggle } from 'flowbite-svelte';
 	import toast from 'svelte-french-toast';
 	import { superForm } from 'sveltekit-superforms/client';
 
@@ -14,6 +14,7 @@
 	export let form: ActionData;
 
 	let isUseCustomSlug = false;
+	let searchQuery = '';
 	const {
 		form: formS,
 		errors,
@@ -93,7 +94,7 @@
 		{/if}
 	</form>
 
-	<div class="mt-4 space-y-2" use:autoAnimate>
+	<div class="mt-6 space-y-2" use:autoAnimate>
 		{#if form?.success === true && !$page.data.session}
 			<SingleResult
 				slug={form.addedLink.slug}
@@ -101,7 +102,13 @@
 				createdDate={form.addedLink.createdAt}
 				updatedDate={form.addedLink.updatedAt} />
 		{:else if $page.data.session && data.links && data.links.length > 0}
-			{#each data.links as link (link.id)}
+			<FloatingLabelInput
+				id="search"
+				name="search"
+				type="text"
+				label="Search link"
+				bind:value={searchQuery} />
+			{#each data.links.filter((each) => each.slug.includes(searchQuery) || each.link.includes(searchQuery)) as link (link.id)}
 				<SingleResult
 					slug={link.slug}
 					link={link.link}
