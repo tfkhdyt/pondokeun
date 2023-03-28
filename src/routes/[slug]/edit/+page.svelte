@@ -20,6 +20,10 @@
 	export let data: PageData;
 	export let form: ActionData;
 	let { slug } = $page.params;
+	let linkMemo = data.link?.link;
+	let createdAtMemo = data.link?.createdAt as Date;
+	let updatedAtMemo = data.link?.updatedAt as Date;
+
 	const {
 		form: formS,
 		errors,
@@ -53,7 +57,7 @@
 	<form class="pt-4 space-y-4" method="POST" use:enhance>
 		<div>
 			<Label defaultClass="mb-2 text-base font-medium block">Link</Label>
-			<Input type="url" size="md" disabled readonly value={data.link?.link} />
+			<Input type="url" size="md" disabled readonly value={linkMemo} />
 		</div>
 		<div>
 			<Label for="slug" defaultClass="mb-2 text-base font-medium block">Slug</Label>
@@ -76,7 +80,7 @@
 			<div>
 				<Label defaultClass="mb-0 text-base font-medium block">Created at</Label>
 				<P
-					>{data.link?.createdAt.toLocaleString('en-GB', {
+					>{createdAtMemo.toLocaleString('en-GB', {
 						dateStyle: 'full',
 						timeStyle: 'medium',
 					})}</P>
@@ -84,7 +88,7 @@
 			<div>
 				<Label defaultClass="mb-0 text-base font-medium block">Updated at</Label>
 				<P
-					>{data.link?.updatedAt.toLocaleString('en-GB', {
+					>{updatedAtMemo.toLocaleString('en-GB', {
 						dateStyle: 'full',
 						timeStyle: 'medium',
 					})}</P>
