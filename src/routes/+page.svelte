@@ -129,7 +129,7 @@
 				link={form.addedLink.link}
 				createdDate={form.addedLink.createdAt}
 				updatedDate={form.addedLink.updatedAt} />
-		{:else if $page.data.session}
+		{:else if $page.data.session && data.links && data.links.length > 0}
 			<div class="flex flex-col gap-2 items-center md:flex-row">
 				<div class="w-full md:w-auto grow">
 					<FloatingLabelInput
