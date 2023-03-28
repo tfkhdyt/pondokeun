@@ -42,6 +42,13 @@ export const actions = {
 
 		const { customName } = form.data;
 		const { slug } = event.params;
+		if (customName === slug) {
+			return fail(401, {
+				form,
+				message: 'Old slug and new slug must be different',
+			});
+		}
+
 		const session = await event.locals.getSession();
 		if (!session?.user) {
 			return fail(401, { form, message: 'You should sign in first' });
