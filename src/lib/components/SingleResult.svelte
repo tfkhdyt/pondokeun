@@ -12,7 +12,7 @@
 	export let link: string;
 	export let slug: string;
 	export let createdDate: Date;
-	// export let updatedDate: Date;
+	export let updatedDate: Date;
 
 	$: completeUrl = `${PUBLIC_APP_URL}/${slug}`;
 	let isHovered = false;
@@ -89,26 +89,38 @@
 	</div>
 	<div use:autoAnimate={{ duration: 100 }}>
 		{#if isHovered}
-			<div class="flex">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="mr-1 w-5 h-5">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-				</svg>
-				<p
-					title={createdDate.toLocaleString('en-GB', {
-						dateStyle: 'full',
-						timeStyle: 'medium',
-					})}>
-					{dayjs().to(createdDate)}
-				</p>
+			<div class="flex gap-2">
+				<div class="flex">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="mr-1 w-5 h-5">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<p
+						title={createdDate.toLocaleString('en-GB', {
+							dateStyle: 'full',
+							timeStyle: 'medium',
+						})}>
+						{dayjs().to(createdDate)}
+					</p>
+				</div>
+				{#if createdDate.toISOString() !== updatedDate.toISOString()}
+					<p
+						class="underline"
+						title={updatedDate.toLocaleString('en-GB', {
+							dateStyle: 'full',
+							timeStyle: 'medium',
+						})}>
+						(Updated {dayjs().to(updatedDate)})
+					</p>
+				{/if}
 			</div>
 		{/if}
 	</div>

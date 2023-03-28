@@ -98,10 +98,15 @@
 			<SingleResult
 				slug={form.addedLink.slug}
 				link={form.addedLink.link}
-				createdDate={form.addedLink.createdAt} />
+				createdDate={form.addedLink.createdAt}
+				updatedDate={form.addedLink.updatedAt} />
 		{:else if $page.data.session && data.links && data.links.length > 0}
 			{#each data.links as link (link.id)}
-				<SingleResult slug={link.slug} link={link.link} createdDate={link.createdAt} />
+				<SingleResult
+					slug={link.slug}
+					link={link.link}
+					createdDate={link.createdAt}
+					updatedDate={link.updatedAt} />
 			{/each}
 		{/if}
 	</div>
