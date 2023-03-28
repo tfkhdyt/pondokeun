@@ -10,6 +10,7 @@ export interface ILinkService {
 	verifySlugAvailability(slug: string): Promise<Error | null>;
 	getAllLinks(email: string): Promise<[Link[], Error | null]>;
 	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
+	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null>;
 }
 
 @injectable()
@@ -63,5 +64,16 @@ export default class LinkService implements ILinkService {
 		const [link, err] = await this.linkRepo.getLinkBySlug(slug);
 
 		return [link, err];
+	}
+
+	async updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null> {
+		let err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
+		if (err instanceof Error) {
+			return err;
+		}
+
+		err = await this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
+
+		return err;
 	}
 }

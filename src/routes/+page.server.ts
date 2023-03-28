@@ -33,7 +33,6 @@ export const load = (async (event) => {
 
 export const actions = {
 	default: async (event) => {
-		const session = await event.locals.getSession();
 		const form = await superValidate(event, linkSchema);
 
 		if (!form.valid) {
@@ -41,6 +40,7 @@ export const actions = {
 		}
 
 		const { link, customName } = form.data;
+		const session = await event.locals.getSession();
 
 		if (customName) {
 			if (!session?.user) {

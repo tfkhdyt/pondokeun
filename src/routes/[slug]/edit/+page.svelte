@@ -1,12 +1,42 @@
 <script lang="ts">
-	import { Breadcrumb, BreadcrumbItem, Button, Heading, Input, Label, P } from 'flowbite-svelte';
+	import {
+		Breadcrumb,
+		BreadcrumbItem,
+		Button,
+		Heading,
+		Helper,
+		Input,
+		Label,
+		P,
+	} from 'flowbite-svelte';
+	import toast from 'svelte-french-toast';
+	import { superForm } from 'sveltekit-superforms/client';
 
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
 	export let data: PageData;
+	export let form: ActionData;
 	let { slug } = $page.params;
+	const {
+		form: formS,
+		errors,
+		constraints,
+		enhance,
+	} = superForm(data.form, { taintedMessage: false });
+
+	$: if (!form?.success && form?.message) {
+		toast.error(form.message, { position: 'top-right' });
+	}
+
+	$: if (form?.success) {
+		goto('/');
+		toast.success('Update success', {
+			position: 'top-right',
+		});
+	}
 </script>
 
 <svelte:head>
@@ -20,15 +50,27 @@
 		<BreadcrumbItem href="/{slug}/edit">Edit</BreadcrumbItem>
 	</Breadcrumb>
 	<Heading tag="h2">Edit <span class="text-[#1a56db]">/{slug}</span></Heading>
-	<form class="pt-4 space-y-4">
+	<form class="pt-4 space-y-4" method="POST" use:enhance>
 		<div>
 			<Label defaultClass="mb-2 text-base font-medium block">Link</Label>
 			<Input type="url" size="md" disabled readonly value={data.link?.link} />
 		</div>
 		<div>
 			<Label for="slug" defaultClass="mb-2 text-base font-medium block">Slug</Label>
-			<Input type="text" name="slug" id="slug" size="md" value={data.link?.slug} />
+			<Input
+				type="text"
+				name="customName"
+				id="slug"
+				size="md"
+				bind:value={$formS.customName}
+				color={$errors.customName || (form?.success && form?.message) ? 'red' : 'base'}
+				pattern="[a-zA-Z0-9_-]*"
+				{...$constraints.customName} />
+			{#if $errors.customName}
+				<Helper class="mt-2" color="red">{$errors.customName.join(', ')}</Helper>
+			{/if}
 		</div>
+
 		<div class="space-y-4">
 			<div>
 				<Label defaultClass="mb-0 text-base font-medium block">Created at</Label>
@@ -47,7 +89,7 @@
 					})}</P>
 			</div>
 		</div>
-		<Button>
+		<Button type="submit">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"

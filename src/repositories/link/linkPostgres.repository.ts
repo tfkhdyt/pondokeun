@@ -38,6 +38,23 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return null;
 	}
 
+	async verifySlugOwnership(slug: string, email: string): Promise<Error | null> {
+		const link = await this.db.link.findFirst({
+			where: {
+				slug,
+				user: {
+					email,
+				},
+			},
+		});
+
+		if (!link) {
+			return new Error("You don't have access to this resource");
+		}
+
+		return null;
+	}
+
 	async getAllLinks(email: string): Promise<[Link[], Error | null]> {
 		let links: Link[] = [];
 
@@ -73,5 +90,22 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		}
 
 		return [link, null];
+	}
+
+	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Error | null> {
+		const updatedLink = await this.db.link.update({
+			where: {
+				slug: oldSlug,
+			},
+			data: {
+				slug: newSlug,
+			},
+		});
+
+		if (!updatedLink) {
+			return new Error(`Failed to update /${oldSlug}`);
+		}
+
+		return null;
 	}
 }

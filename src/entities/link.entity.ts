@@ -6,3 +6,15 @@ export const linkSchema = z.object({
 		.url({ message: 'Invalid URL' }),
 	customName: z.string().optional(),
 });
+
+export const updateLinkSchema = z.object({
+	customName: z.string({ required_error: 'Slug is required', invalid_type_error: 'Invalid type' }),
+});
+
+export function getUpdateLinkSchema(slug = '') {
+	return z.object({
+		customName: z
+			.string({ required_error: 'Slug is required', invalid_type_error: 'Invalid type' })
+			.default(slug),
+	});
+}

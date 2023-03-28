@@ -3,3 +3,7 @@ export interface CreateLinkRequest {
 	slug?: string;
 	email?: string | null;
 }
+
+export interface UpdateLinkRequest {
+	slug: string;
+}
