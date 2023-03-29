@@ -25,7 +25,8 @@
 	class="flex flex-col gap-4 p-4 text-sm text-blue-800 bg-blue-50 rounded-lg md:gap-2 dark:text-blue-400 dark:bg-gray-800"
 	role="alert"
 	on:mouseenter={() => (isHovered = true)}
-	on:mouseleave={() => (isHovered = false)}>
+	on:mouseleave={() => (isHovered = false)}
+	use:autoAnimate={{ duration: 100 }}>
 	<div class="flex flex-col gap-4 justify-between items-center w-full md:flex-row">
 		<div class="flex justify-between items-start w-full md:items-center md:w-4/6">
 			<div class="w-4/6 font-medium line-clamp-2" title={link}>
@@ -85,42 +86,40 @@
 			</Button>
 		</ButtonGroup>
 	</div>
-	<div use:autoAnimate={{ duration: 100 }}>
-		{#if isHovered}
-			<div class="flex gap-2">
-				<div class="flex">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="mr-1 w-5 h-5">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-					</svg>
-					<p
-						title={createdDate.toLocaleString('en-GB', {
-							dateStyle: 'full',
-							timeStyle: 'medium',
-						})}>
-						{dayjs().to(createdDate)}
-					</p>
-				</div>
-				{#if createdDate.toISOString() !== updatedDate.toISOString()}
-					<p
-						class="underline"
-						title={updatedDate.toLocaleString('en-GB', {
-							dateStyle: 'full',
-							timeStyle: 'medium',
-						})}>
-						(Updated {dayjs().to(updatedDate)})
-					</p>
-				{/if}
+	{#if isHovered}
+		<div class="flex gap-2">
+			<div class="flex">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="mr-1 w-5 h-5">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+				</svg>
+				<p
+					title={createdDate.toLocaleString('en-GB', {
+						dateStyle: 'full',
+						timeStyle: 'medium',
+					})}>
+					{dayjs().to(createdDate)}
+				</p>
 			</div>
-		{/if}
-	</div>
+			{#if createdDate.toISOString() !== updatedDate.toISOString()}
+				<p
+					class="underline"
+					title={updatedDate.toLocaleString('en-GB', {
+						dateStyle: 'full',
+						timeStyle: 'medium',
+					})}>
+					(Updated {dayjs().to(updatedDate)})
+				</p>
+			{/if}
+		</div>
+	{/if}
 </div>
 <DeleteModal bind:popupModal {slug} />
