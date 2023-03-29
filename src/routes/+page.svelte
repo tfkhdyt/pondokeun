@@ -77,7 +77,7 @@
 		<Input
 			id="link"
 			placeholder="Paste a link to shorten it"
-			size="lg"
+			size="md"
 			name="link"
 			bind:value={$formS.link}
 			{...$constraints.link}
@@ -96,7 +96,7 @@
 					stroke-linejoin="round"
 					d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
 			</svg>
-			<Button slot="right" size="md" type="submit">Shorten</Button>
+			<Button slot="right" size="xs" type="submit">Shorten</Button>
 		</Input>
 
 		{#if $errors.link}
@@ -108,7 +108,7 @@
 				<Input
 					type="text"
 					placeholder="Your custom slug (Alphanumeric, hyphen, and underscore only)"
-					size="lg"
+					size="md"
 					name="customName"
 					bind:value={$formS.customName}
 					{...$constraints.customName}
