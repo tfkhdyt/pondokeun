@@ -77,15 +77,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 	}
 
 	async getLinkBySlug(slug: string): Promise<[Link | null, Error | null]> {
-		let link: Link | null = null;
+		const link = await this.db.link.findFirst({
+			where: {
+				slug,
+			},
+		});
 
-		try {
-			link = await this.db.link.findFirst({
-				where: {
-					slug,
-				},
-			});
-		} catch (error) {
+		if (!link) {
 			return [link, new Error('Link is not found')];
 		}
 
