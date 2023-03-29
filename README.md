@@ -25,6 +25,7 @@ Lightweight, Modern, Free and Open Source Link Shortener
 - PostgreSQL
 - GitHub OAuth
 - Google OAuth
+- Facebook OAuth
 
 ### Installation
 
@@ -53,6 +54,8 @@ pnpm prisma migrate dev
 - `GITHUB_SECRET` = Your GitHub OAuth Client Secret
 - `GOOGLE_ID` = Your Google OAuth Client ID
 - `GOOGLE_SECRET` = Your Google OAuth Client Secret
+- `FACEBOOK_ID` = Your Facebook OAuth Client ID
+- `FACEBOOK_SECRET` = Your Facebook OAuth Client Secret
 - `AUTH_SECRET` = Random string
 - `PUBLIC_APP_URL` = Your app URL
 
