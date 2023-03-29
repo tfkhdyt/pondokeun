@@ -20,11 +20,7 @@ export const load = (async (event) => {
 	const [link, err] = await linkService.getLinkBySlug(slug);
 	const form = await superValidate(event, getUpdateLinkSchema(link?.slug));
 	if (err instanceof Error) {
-		return fail(404, {
-			form,
-			message: `/${slug} is not found`,
-			success: false,
-		});
+		throw redirect(301, `/${slug}`);
 	}
 
 	return { form, link };
