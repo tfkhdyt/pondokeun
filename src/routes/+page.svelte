@@ -34,7 +34,11 @@
 	];
 	let searchQuery = '';
 	$: filteredData = data?.links
-		?.filter((each) => each.slug.includes(searchQuery) || each.link.includes(searchQuery))
+		?.filter(
+			(each) =>
+				each.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				each.link.toLowerCase().includes(searchQuery.toLowerCase())
+		)
 		.sort((a, b) => {
 			if (sortCategory === sortCategories[1].value) {
 				return a.updatedAt.getTime() - b.updatedAt.getTime();
