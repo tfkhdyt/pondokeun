@@ -19,10 +19,10 @@ export const load = (async (event) => {
 	if (session?.user?.email) {
 		const [links, err] = await linkService.getAllLinks(session.user.email);
 		if (err instanceof Error) {
-			return fail(500, {
+			return {
 				form,
 				message: err.message,
-			});
+			};
 		}
 
 		return { form, links };
