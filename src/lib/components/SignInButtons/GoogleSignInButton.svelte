@@ -5,7 +5,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	on:click={() => signIn('google')}
-	class="flex items-center p-3 text-base font-bold text-gray-900 bg-gray-50 rounded-lg cursor-pointer dark:text-white dark:bg-gray-600 hover:bg-gray-100 hover:shadow group dark:hover:bg-gray-500">
+	class="flex items-center p-3 text-base font-medium text-gray-900 bg-gray-50 rounded-lg cursor-pointer dark:text-white dark:bg-gray-600 hover:bg-gray-100 hover:shadow group dark:hover:bg-gray-500">
 	<svg
 		width="64px"
 		height="64px"
