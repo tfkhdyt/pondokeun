@@ -16,13 +16,14 @@
 		<Page404>
 			<svelte:fragment slot="h1">404</svelte:fragment>
 			<svelte:fragment slot="paragraph">
-				<p class="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl dark:text-white">
+				<p
+					class="mb-4 text-xl font-bold tracking-tight text-gray-900 md:text-2xl md:text-4xl dark:text-white">
 					Something's missing.
 				</p>
-				<p class="mb-4 text-lg font-light text-gray-500 dark:text-gray-400">
+				<p class="mb-4 text-sm font-light text-gray-500 md:text-base dark:text-gray-400">
 					Sorry, we can't find that page.
 				</p>
-				<Button href="/" size="lg" color="blue">
+				<Button href="/" size="sm" color="blue">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
