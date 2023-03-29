@@ -5,10 +5,10 @@
 </script>
 
 <div class="mb-4 space-y-6 text-center dark:text-gray-200">
-	<h1 class="text-4xl font-bold">
+	<h1 class="text-3xl font-bold md:text-4xl">
 		Free and Open Source <span class="text-[#1a56db]">Link Shortener</span>
 	</h1>
-	<h2 class="text-xl font-medium">
+	<h2 class="text-lg font-medium md:text-xl">
 		Link shortening made easy, secure, and free with the transparency of open source.
 	</h2>
 	{#if !$page.data.session?.user}
