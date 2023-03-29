@@ -29,10 +29,10 @@
 	use:autoAnimate={{ duration: 100 }}>
 	<div class="flex flex-col gap-4 justify-between items-center w-full md:flex-row">
 		<div class="flex justify-between items-start w-full md:items-center md:w-4/6">
-			<div class="w-4/6 font-medium line-clamp-2 hyphens-auto" title={link}>
+			<div class="w-72 font-medium line-clamp-2" title={link}>
 				{link}
 			</div>
-			<A class="font-bold" href={completeUrl} target="_blank">/{slug}</A>
+			<A class="font-bold" href={completeUrl} target="_blank" aClass="text-right">/{slug}</A>
 		</div>
 		<ButtonGroup divClass="flex items-center">
 			<Button
