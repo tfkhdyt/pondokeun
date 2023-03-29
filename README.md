@@ -1,38 +1,76 @@
-# create-svelte
+# Pondokeun
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Lightweight, Modern, Free and Open Source Link Shortener
 
-## Creating a project
+## Built with
 
-If you're seeing this, you've probably already done this step. Congrats!
+- SvelteKit (Web Framework)
+- Tailwind CSS (CSS Framework)
+- TypeScript (Programming Language)
+- Flowbite (UI Component)
+- Prisma (ORM)
+- Zod (Validation Library)
+- Auth.js (Auth Library)
+- Auto Animate (Animation Library)
+- Day.js (Date Parser Library)
+- Inversify (Dependency Injection Library)
+- Svelte French Toast (Toast / Notification Library)
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- Node.js Package Manager (_pnpm_ is highly recommended)
+- PostgreSQL
+- GitHub OAuth
+- Google OAuth
+- Facebook OAuth
+
+### Installation
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
+git clone https://github.com/tfkhdyt/pondokeun
+cd pondokeun
+pnpm i
+# npm install
+# yarn install
 
-# create a new project in my-app
-npm create svelte@latest my-app
+# setup environment variable
+cp .env.example .env
+# and then put your env var to .env file
+
+# start your PostgreSQL
+sudo systemctl start postgresql.service
+
+# database migration
+pnpm prisma migrate dev
 ```
 
-## Developing
+#### Environment Variables
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- `DATABASE_URL` = Your PostgreSQL database url
+- `GITHUB_ID` = Your GitHub OAuth Client ID
+- `GITHUB_SECRET` = Your GitHub OAuth Client Secret
+- `GOOGLE_ID` = Your Google OAuth Client ID
+- `GOOGLE_SECRET` = Your Google OAuth Client Secret
+- `FACEBOOK_ID` = Your Facebook OAuth Client ID
+- `FACEBOOK_SECRET` = Your Facebook OAuth Client Secret
+- `AUTH_SECRET` = Random string
+- `PUBLIC_APP_URL` = Your app URL
+
+Check [.env.example](.env.example) file for more info.
+
+### Usage
 
 ```bash
-npm run dev
+# development
+pnpm dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# production
+pnpm build
+pnpm preview
+
+# if you change the database schema
+pnpm prisma migrate dev
 ```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
