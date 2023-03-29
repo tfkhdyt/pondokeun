@@ -2,9 +2,9 @@
 	import { Button } from 'flowbite-svelte';
 	import { Page404 } from 'flowbite-svelte-blocks';
 
-	import type { PageServerData } from './$types';
+	import type { PageData } from './$types';
 
-	export let data: PageServerData;
+	export let data: PageData;
 </script>
 
 <svelte:head>
