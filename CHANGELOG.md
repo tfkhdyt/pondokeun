@@ -2,6 +2,59 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.4.0 - 2023-03-29
+#### Bug Fixes
+- **(404-page)** reduce text size - (a885d2d) - tfkhdyt
+- **(SingleResult)** adjust link and slug layout - (e76920f) - tfkhdyt
+- **(cta)** reduce font size for mobile - (bf19333) - tfkhdyt
+- **(cta)** show cta buttons only for not yet signed in user - (df86a4b) - tfkhdyt
+- **(edit)** redirect to /{slug} is slug is not found - (7338f71) - tfkhdyt
+- **(home)** disable taintedMessage on superForm - (b4675a3) - tfkhdyt
+- **(link-postgres)** change getLinkBySlug error handling - (4bd6067) - tfkhdyt
+- **(page-server)** don't return fail() if error - (3c6d17b) - tfkhdyt
+- **(root-page)** change link input field - (5b01c84) - tfkhdyt
+- **(root-page)** reduce input field size - (33cf5f8) - tfkhdyt
+- **(root-page)** show search bar when data is more than 0 - (3494ae8) - tfkhdyt
+- **(root-page)** make search bar and sort field responsive - (ea68a4b) - tfkhdyt
+- **(sign-in-button)** reduce font weight to medium - (39973ba) - tfkhdyt
+- **(single-result)** fix button group by removing anchor tag - (25e90c3) - tfkhdyt
+- **(singleResult)** add hyphens-auto to url - (2f7958a) - tfkhdyt
+- **(slug-page)** change data type to PageData - (e514a09) - tfkhdyt
+- remove facebook oauth - (bb4b347) - tfkhdyt
+#### Build system
+- **(deps)** update dependencies - (4740ebb) - tfkhdyt
+- **(deps)** remove unneeded dependency - (440220f) - tfkhdyt
+#### Documentation
+- add README - (bc47859) - tfkhdyt
+#### Features
+- **(auth)** add facebook provider - (88c62f4) - tfkhdyt
+- **(auth)** add google provider - (a4868d1) - tfkhdyt
+- **(edit)** add memo state for link, created, and updated date - (8a18b71) - tfkhdyt
+- **(edit-page)** add validation for same old and new slug - (accb38b) - tfkhdyt
+- **(edit-page)** add placeholder to slug input field - (9cbb4a1) - tfkhdyt
+- **(env)** add GOOGLE_ID and GOOGLE_SECRET - (27a9c27) - tfkhdyt
+- **(fonts)** set font to Poppins - (b3931a7) - tfkhdyt
+- **(header)** change icon and add more horizontal padding - (8f77c64) - tfkhdyt
+- **(page)** change favicon - (b49a65e) - tfkhdyt
+- **(page)** add edit page - (8dc94ee) - tfkhdyt
+- **(page)** add page transition - (6ea87fb) - tfkhdyt
+- **(root-page)** add placeholder to select input - (37b43a8) - tfkhdyt
+- **(root-page)** add sort feature - (8f87e88) - tfkhdyt
+- **(root-page)** add search feature - (ad0bfb6) - tfkhdyt
+- **(root-page)** show more toast on success and error - (a99acc8) - tfkhdyt
+- **(single-result)** show updated date - (cb2b4a8) - tfkhdyt
+- add "update slug" feature - (cb1ee41) - tfkhdyt
+#### Miscellaneous Chores
+- add privacy policy - (0a17e23) - tfkhdyt
+#### Refactoring
+- **(root-page)** create filteredData state - (f3aadaf) - tfkhdyt
+- **(single-result)** move autoAnimate to outer element - (1b8f12b) - tfkhdyt
+- **(tailwind)** remove line clamp plugin - (28fdbcd) - tfkhdyt
+#### Style
+- **(edit-page)** add empty line between date and submit button - (321f973) - tfkhdyt
+
+- - -
+
 ## 0.3.0 - 2023-03-27
 #### Build system
 - **(deps)** update dependencies - (b9264e8) - tfkhdyt
