@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Card } from 'flowbite-svelte';
 
-	import FacebookSignInButton from '$lib/components/SignInButtons/FacebookSignInButton.svelte';
 	import GitHubSignInButton from '$lib/components/SignInButtons/GitHubSignInButton.svelte';
 	import GoogleSignInButton from '$lib/components/SignInButtons/GoogleSignInButton.svelte';
 </script>
@@ -17,7 +16,6 @@
 			<div class="my-4 space-y-3">
 				<GitHubSignInButton />
 				<GoogleSignInButton />
-				<FacebookSignInButton />
 			</div>
 		</form>
 	</Card>
