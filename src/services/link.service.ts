@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
 import BaseError from '$exceptions/BaseError';
-import UnauthorizedError from '$exceptions/UnauthorizedError';
+import UnauthenticatedError from '$exceptions/UnauthenticatedError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
@@ -12,7 +12,7 @@ export interface ILinkService {
 	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
 	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null>;
-	deleteLinkBySlug(slug: string, email: string): Promise<Error | null>;
+	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
 }
 
 @injectable()
@@ -26,7 +26,7 @@ export default class LinkService implements ILinkService {
 	async createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]> {
 		if (payload.slug) {
 			if (!payload.email) {
-				throw new UnauthorizedError('You should sign in first');
+				throw new UnauthenticatedError('You should sign in first');
 			}
 
 			const err = await this.linkRepo.verifySlugAvailability(payload.slug);
@@ -74,19 +74,22 @@ export default class LinkService implements ILinkService {
 	}
 
 	async updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null> {
-		let err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
+		const err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
 		if (err instanceof Error) {
 			return err;
 		}
 
-		err = await this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
+		const err2 = await this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
+		if (err2 instanceof Error) {
+			return err2;
+		}
 
-		return err;
+		return null;
 	}
 
-	async deleteLinkBySlug(slug: string, email: string): Promise<Error | null> {
+	async deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null> {
 		let err = this.linkRepo.verifySlugOwnership(slug, email);
-		if (err instanceof Error) {
+		if (err instanceof BaseError) {
 			return err;
 		}
 
