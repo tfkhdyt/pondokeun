@@ -1,27 +1,24 @@
-import { initTRPC, TRPCError } from '@trpc/server';
-import SuperJSON from 'superjson';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { container } from '$containers/inversify.container';
 import { linkSchema } from '$entities/link.entity';
+import BaseError from '$exceptions/BaseError';
 import type { ILinkService } from '$services/link.service';
 import { TYPES } from '$types/inversify.type';
 
-import type { Context } from './context';
+import { auth } from './middleware';
+import { t } from './t';
 
 const linkService = container.get<ILinkService>(TYPES.ILinkService);
 
-export const t = initTRPC.context<Context>().create({
-	transformer: SuperJSON,
-});
-
 export const router = t.router({
-	getAllLinks: t.procedure.query(async ({ ctx }) => {
-		const [links, err] = await linkService.getAllLinks(ctx.session?.user?.email as string);
-		if (err instanceof Error) {
+	getAllLinks: t.procedure.use(auth).query(async ({ ctx }) => {
+		const [links, err] = await linkService.getAllLinks(ctx.userEmail);
+		if (err instanceof BaseError) {
 			throw new TRPCError({
-				code: 'INTERNAL_SERVER_ERROR',
-				message: 'Failed to fetch all links',
+				code: err.statusCode,
+				message: err.message,
 				cause: err,
 			});
 		}
@@ -32,24 +29,6 @@ export const router = t.router({
 		const { link, customName } = input;
 		const { session } = ctx;
 
-		if (customName) {
-			if (!session?.user) {
-				throw new TRPCError({
-					code: 'UNAUTHORIZED',
-					message: 'You should sign in first',
-				});
-			}
-
-			const err = await linkService.verifySlugAvailability(customName);
-			if (err instanceof Error) {
-				throw new TRPCError({
-					code: 'BAD_REQUEST',
-					message: err.message,
-					cause: err,
-				});
-			}
-		}
-
 		const [addedLink, err] = await linkService.createLink({
 			link,
 			slug: customName,
@@ -57,7 +36,7 @@ export const router = t.router({
 		});
 		if (err instanceof Error) {
 			throw new TRPCError({
-				code: 'INTERNAL_SERVER_ERROR',
+				code: err.statusCode,
 				message: err.message,
 				cause: err,
 			});
