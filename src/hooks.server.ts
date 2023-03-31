@@ -1,3 +1,4 @@
+import type { Adapter } from '@auth/core/adapters';
 import type { Provider } from '@auth/core/providers';
 import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
@@ -13,7 +14,7 @@ import { router } from '$lib/trpc/router';
 
 export const handle = sequence(
 	SvelteKitAuth({
-		adapter: PrismaAdapter(db),
+		adapter: PrismaAdapter(db) as Adapter,
 		providers: [
 			GitHub({
 				clientId: GITHUB_ID,
