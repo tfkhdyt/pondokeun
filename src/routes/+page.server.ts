@@ -3,6 +3,8 @@ import { superValidate } from 'sveltekit-superforms/server';
 
 import { container } from '$containers/inversify.container';
 import { linkSchema } from '$entities/link.entity';
+import { createContext } from '$lib/trpc/context';
+import { router } from '$lib/trpc/router';
 import type { ILinkService } from '$services/link.service';
 import { TYPES } from '$types/inversify.type';
 
@@ -17,15 +19,7 @@ export const load = (async (event) => {
 	const { session } = await event.parent();
 
 	if (session?.user?.email) {
-		const [links, err] = await linkService.getAllLinks(session.user.email);
-		if (err instanceof Error) {
-			return {
-				form,
-				message: err.message,
-			};
-		}
-
-		return { form, links };
+		return { form, links: router.createCaller(await createContext(event)).getAllLinks() };
 	}
 
 	return { form };
