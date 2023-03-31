@@ -18,3 +18,10 @@ export function getUpdateLinkSchema(slug = '') {
 			.default(slug),
 	});
 }
+
+export const deleteLinkSchema = z.object({
+	slug: z.string({
+		invalid_type_error: 'Slug should be string',
+		required_error: 'Slug is required',
+	}),
+});

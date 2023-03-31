@@ -1,8 +1,8 @@
+import type { Link } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
 
 import { container } from '$containers/inversify.container';
-import { linkSchema } from '$entities/link.entity';
+import { deleteLinkSchema, linkSchema } from '$entities/link.entity';
 import BaseError from '$exceptions/BaseError';
 import type { ILinkService } from '$services/link.service';
 import { TYPES } from '$types/inversify.type';
@@ -34,7 +34,7 @@ export const router = t.router({
 			slug: customName,
 			email: session?.user?.email,
 		});
-		if (err instanceof Error) {
+		if (err instanceof BaseError) {
 			throw new TRPCError({
 				code: err.statusCode,
 				message: err.message,
@@ -42,32 +42,19 @@ export const router = t.router({
 			});
 		}
 
-		return addedLink;
+		return addedLink as Link;
 	}),
 	deleteLink: t.procedure
-		.input(
-			z.object({
-				slug: z.string({
-					invalid_type_error: 'Slug should be string',
-					required_error: 'Slug is required',
-				}),
-			})
-		)
+		.use(auth)
+		.input(deleteLinkSchema)
 		.mutation(async ({ input, ctx }) => {
 			const { slug } = input;
-			const { session } = ctx;
+			const { userEmail } = ctx;
 
-			if (!session?.user?.email) {
+			const err = await linkService.deleteLinkBySlug(slug, userEmail);
+			if (err instanceof BaseError)
 				throw new TRPCError({
-					code: 'UNAUTHORIZED',
-					message: 'You should sign in first',
-				});
-			}
-
-			const err = await linkService.deleteLinkBySlug(slug, session.user.email);
-			if (err instanceof Error)
-				throw new TRPCError({
-					code: 'INTERNAL_SERVER_ERROR',
+					code: err.statusCode,
 					message: err.message,
 					cause: err,
 				});
