@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 import { initTRPC, TRPCError } from '@trpc/server';
 import SuperJSON from 'superjson';
+import { z } from 'zod';
 
 import { container } from '$containers/inversify.container';
 import { linkSchema } from '$entities/link.entity';
@@ -66,6 +67,29 @@ export const router = t.router({
 
 		return addedLink;
 	}),
+	deleteLink: t.procedure
+		.input(
+			z.object({
+				slug: z.string({
+					invalid_type_error: 'Slug should be string',
+					required_error: 'Slug is required',
+				}),
+			})
+		)
+		.mutation(async ({ input, ctx }) => {
+			const err = await linkService.deleteLinkBySlug(
+				input.slug,
+				ctx.session?.user?.email as string
+			);
+			if (err instanceof Error)
+				throw new TRPCError({
+					code: 'INTERNAL_SERVER_ERROR',
+					message: err.message,
+					cause: err,
+				});
+
+			return true;
+		}),
 });
 
 export type Router = typeof router;
