@@ -11,6 +11,7 @@ export interface ILinkService {
 	getAllLinks(email: string): Promise<[Link[], Error | null]>;
 	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null>;
+	deleteLinkBySlug(slug: string, email: string): Promise<Error | null>;
 }
 
 @injectable()
@@ -73,6 +74,17 @@ export default class LinkService implements ILinkService {
 		}
 
 		err = await this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
+
+		return err;
+	}
+
+	async deleteLinkBySlug(slug: string, email: string): Promise<Error | null> {
+		let err = this.linkRepo.verifySlugOwnership(slug, email);
+		if (err instanceof Error) {
+			return err;
+		}
+
+		err = this.linkRepo.deleteLinkBySlug(slug);
 
 		return err;
 	}
