@@ -4,6 +4,7 @@ import { inject, injectable } from 'inversify';
 import BadRequestError from '$exceptions/BadRequestError';
 import type BaseError from '$exceptions/BaseError';
 import InternalServerError from '$exceptions/InternalServerError';
+import UnauthorizedError from '$exceptions/UnauthorizedError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
@@ -41,7 +42,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return null;
 	}
 
-	async verifySlugOwnership(slug: string, email: string): Promise<Error | null> {
+	async verifySlugOwnership(slug: string, email: string): Promise<BaseError | null> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -52,7 +53,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return new Error("You don't have access to this resource");
+			return new UnauthorizedError("You don't have access to this resource");
 		}
 
 		return null;
@@ -110,7 +111,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return null;
 	}
 
-	async deleteLinkBySlug(slug: string): Promise<Error | null> {
+	async deleteLinkBySlug(slug: string): Promise<BaseError | null> {
 		const deletedLink = await this.db.link.delete({
 			where: {
 				slug,
@@ -118,7 +119,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!deletedLink) {
-			return new Error(`Failed to delete /${slug}`);
+			return new InternalServerError(`Failed to delete /${slug}`);
 		}
 
 		return null;
