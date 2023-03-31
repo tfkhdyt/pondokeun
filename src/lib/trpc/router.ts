@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import { initTRPC, TRPCError } from '@trpc/server';
 import SuperJSON from 'superjson';
 import { z } from 'zod';
