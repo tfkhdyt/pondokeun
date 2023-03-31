@@ -2,13 +2,14 @@ import type { Link, Prisma } from '@prisma/client';
 import { inject, injectable } from 'inversify';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
+import BaseError from '$exceptions/BaseError';
+import UnauthorizedError from '$exceptions/UnauthorizedError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
 export interface ILinkService {
-	createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]>;
-	verifySlugAvailability(slug: string): Promise<Error | null>;
-	getAllLinks(email: string): Promise<[Link[], Error | null]>;
+	createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]>;
+	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
 	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null>;
 	deleteLinkBySlug(slug: string, email: string): Promise<Error | null>;
@@ -22,7 +23,18 @@ export default class LinkService implements ILinkService {
 		this.linkRepo = linkRepo;
 	}
 
-	async createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]> {
+	async createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]> {
+		if (payload.slug) {
+			if (!payload.email) {
+				throw new UnauthorizedError('You should sign in first');
+			}
+
+			const err = await this.linkRepo.verifySlugAvailability(payload.slug);
+			if (err instanceof BaseError) {
+				return [null, err];
+			}
+		}
+
 		payload.slug = payload.slug || crypto.randomUUID().slice(0, 5);
 
 		let newLink: Prisma.LinkCreateInput = {
@@ -49,13 +61,7 @@ export default class LinkService implements ILinkService {
 		return [addedLink, null];
 	}
 
-	async verifySlugAvailability(slug: string): Promise<Error | null> {
-		const err = await this.linkRepo.verifySlugAvailability(slug);
-
-		return err;
-	}
-
-	async getAllLinks(email: string): Promise<[Link[], Error | null]> {
+	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
 		const [links, err] = await this.linkRepo.getAllLinks(email);
 
 		return [links, err];
