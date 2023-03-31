@@ -51,26 +51,19 @@
 	let link: string;
 	let customName: string;
 	let addedLink: Link;
-	let errors: { message: string; path: string[] }[] | null = null;
 
 	const handleCreateLink = async () => {
 		try {
-			addedLink = await trpc().createLink.mutate({ link, customName });
+			addedLink = await trpc($page).createLink.mutate({ link, customName });
+			await invalidate('links');
 			link = '';
 			customName = '';
-			await invalidate('links');
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
 				toast.error(error.message, { position: 'top-right' });
 			}
 		}
 	};
-
-	$: if (errors) {
-		errors.forEach((error) => {
-			toast.error(error.message, { position: 'top-right' });
-		});
-	}
 
 	$: if (addedLink) {
 		toast.success(`/${addedLink.slug} has been created successfully`, {
