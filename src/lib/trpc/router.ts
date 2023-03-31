@@ -77,10 +77,17 @@ export const router = t.router({
 			})
 		)
 		.mutation(async ({ input, ctx }) => {
-			const err = await linkService.deleteLinkBySlug(
-				input.slug,
-				ctx.session?.user?.email as string
-			);
+			const { slug } = input;
+			const { session } = ctx;
+
+			if (!session?.user?.email) {
+				throw new TRPCError({
+					code: 'UNAUTHORIZED',
+					message: 'You should sign in first',
+				});
+			}
+
+			const err = await linkService.deleteLinkBySlug(slug, session.user.email);
 			if (err instanceof Error)
 				throw new TRPCError({
 					code: 'INTERNAL_SERVER_ERROR',
