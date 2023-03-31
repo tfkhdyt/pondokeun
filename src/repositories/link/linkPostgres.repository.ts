@@ -106,4 +106,18 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 
 		return null;
 	}
+
+	async deleteLinkBySlug(slug: string): Promise<Error | null> {
+		const deletedLink = await this.db.link.delete({
+			where: {
+				slug,
+			},
+		});
+
+		if (!deletedLink) {
+			return new Error(`Failed to delete /${slug}`);
+		}
+
+		return null;
+	}
 }

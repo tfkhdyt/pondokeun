@@ -7,4 +7,5 @@ export interface LinkRepository {
 	getAllLinks(email: string): Promise<[Link[], Error | null]>;
 	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
 	updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Error | null>;
+	deleteLinkBySlug(slug: string): Promise<Error | null>;
 }
