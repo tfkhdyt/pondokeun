@@ -22,7 +22,7 @@ export default class LinkService implements ILinkService {
 	}
 
 	async createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]> {
-		payload.slug = payload.slug ?? crypto.randomUUID().slice(0, 5);
+		payload.slug = payload.slug || crypto.randomUUID().slice(0, 5);
 
 		let newLink: Prisma.LinkCreateInput = {
 			link: payload.link,
