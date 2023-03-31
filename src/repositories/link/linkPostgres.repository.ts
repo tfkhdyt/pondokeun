@@ -1,6 +1,9 @@
 import type { Link, Prisma, PrismaClient } from '@prisma/client';
 import { inject, injectable } from 'inversify';
 
+import BadRequestError from '$exceptions/BadRequestError';
+import type BaseError from '$exceptions/BaseError';
+import InternalServerError from '$exceptions/InternalServerError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
@@ -12,19 +15,19 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		this.db = db;
 	}
 
-	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, Error | null]> {
+	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, BaseError | null]> {
 		const addedLink = await this.db.link.create({
 			data: payload,
 		});
 
 		if (!addedLink) {
-			return [addedLink, new Error('Failed to create new link')];
+			return [addedLink, new InternalServerError('Failed to create new link')];
 		}
 
 		return [addedLink, null];
 	}
 
-	async verifySlugAvailability(slug: string): Promise<Error | null> {
+	async verifySlugAvailability(slug: string): Promise<BaseError | null> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -32,7 +35,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (link) {
-			return new Error(`/${slug} has been used`);
+			return new BadRequestError(`/${slug} has been used`);
 		}
 
 		return null;
@@ -55,7 +58,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return null;
 	}
 
-	async getAllLinks(email: string): Promise<[Link[], Error | null]> {
+	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
 		let links: Link[] = [];
 
 		try {
@@ -70,7 +73,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 				},
 			});
 		} catch (error) {
-			return [links, new Error('Failed to fetch all links')];
+			return [links, new InternalServerError('Failed to fetch all links')];
 		}
 
 		return [links, null];
