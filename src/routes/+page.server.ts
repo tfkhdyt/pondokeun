@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import { createContext } from '$lib/trpc/context';
 import { router } from '$lib/trpc/router';
 
