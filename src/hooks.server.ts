@@ -25,5 +25,5 @@ export const handle = sequence(
 			}),
 		] as Provider[],
 	}),
-	createTRPCHandle({ router, createContext })
+	createTRPCHandle({ router, createContext, url: '/api/trpc' })
 );
