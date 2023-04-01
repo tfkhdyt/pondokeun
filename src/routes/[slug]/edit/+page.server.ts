@@ -15,8 +15,9 @@ export const load = (async (event) => {
 	const { slug } = event.params;
 
 	try {
-		const link = await router.createCaller(await createContext(event)).getLinkBySlug({ slug });
-		return { link };
+		return {
+			link: await router.createCaller(await createContext(event)).getLinkBySlug({ slug }),
+		};
 	} catch (error) {
 		if (error instanceof TRPCError) {
 			throw redirect(301, `/${slug}`);
