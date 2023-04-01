@@ -2,15 +2,18 @@ import type { Link, Prisma } from '@prisma/client';
 import { inject, injectable } from 'inversify';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
+import BadRequestError from '$exceptions/BadRequestError';
+import BaseError from '$exceptions/BaseError';
+import UnauthenticatedError from '$exceptions/UnauthenticatedError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
 export interface ILinkService {
-	createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]>;
-	verifySlugAvailability(slug: string): Promise<Error | null>;
-	getAllLinks(email: string): Promise<[Link[], Error | null]>;
-	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
-	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null>;
+	createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]>;
+	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
+	getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]>;
+	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<BaseError | null>;
+	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
 }
 
 @injectable()
@@ -21,8 +24,19 @@ export default class LinkService implements ILinkService {
 		this.linkRepo = linkRepo;
 	}
 
-	async createLink(payload: CreateLinkRequest): Promise<[Link, Error | null]> {
-		payload.slug = payload.slug ?? crypto.randomUUID().slice(0, 5);
+	async createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]> {
+		if (payload.slug) {
+			if (!payload.email) {
+				throw new UnauthenticatedError('You should sign in first');
+			}
+
+			const err = await this.linkRepo.verifySlugAvailability(payload.slug);
+			if (err instanceof BaseError) {
+				return [null, err];
+			}
+		}
+
+		payload.slug = payload.slug || crypto.randomUUID().slice(0, 5);
 
 		let newLink: Prisma.LinkCreateInput = {
 			link: payload.link,
@@ -48,31 +62,39 @@ export default class LinkService implements ILinkService {
 		return [addedLink, null];
 	}
 
-	async verifySlugAvailability(slug: string): Promise<Error | null> {
-		const err = await this.linkRepo.verifySlugAvailability(slug);
-
-		return err;
+	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
+		return this.linkRepo.getAllLinks(email);
 	}
 
-	async getAllLinks(email: string): Promise<[Link[], Error | null]> {
-		const [links, err] = await this.linkRepo.getAllLinks(email);
-
-		return [links, err];
+	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
+		return this.linkRepo.getLinkBySlug(slug);
 	}
 
-	async getLinkBySlug(slug: string): Promise<[Link | null, Error | null]> {
-		const [link, err] = await this.linkRepo.getLinkBySlug(slug);
-
-		return [link, err];
-	}
-
-	async updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null> {
+	async updateLinkBySlug(
+		oldSlug: string,
+		newSlug: string,
+		email: string
+	): Promise<BaseError | null> {
 		let err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
-		if (err instanceof Error) {
+		if (err instanceof BaseError) return err;
+
+		if (oldSlug === newSlug) {
+			return new BadRequestError('Old slug and new slug must be different');
+		}
+
+		err = await this.linkRepo.verifySlugAvailability(newSlug);
+		if (err instanceof BaseError) return err;
+
+		return this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
+	}
+
+	async deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null> {
+		let err = this.linkRepo.verifySlugOwnership(slug, email);
+		if (err instanceof BaseError) {
 			return err;
 		}
 
-		err = await this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
+		err = this.linkRepo.deleteLinkBySlug(slug);
 
 		return err;
 	}

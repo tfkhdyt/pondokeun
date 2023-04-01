@@ -1,10 +1,25 @@
 <script lang="ts">
+	import { TRPCClientError } from '@trpc/client';
 	import { Button, Modal } from 'flowbite-svelte';
+	import toast from 'svelte-french-toast';
 
-	import { deleteLink } from '$lib/utils';
+	import { invalidate } from '$app/navigation';
+	import { trpc } from '$lib/trpc/client';
 
 	export let popupModal: boolean;
 	export let slug: string;
+
+	const deleteLink = async (slug: string) => {
+		try {
+			await trpc().deleteLink.mutate({ slug });
+			await invalidate('links');
+			toast.success(`/${slug} has been deleted successfully`, { position: 'top-right' });
+		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				toast.error(error.message, { position: 'top-right' });
+			}
+		}
+	};
 </script>
 
 <div>

@@ -1,26 +1,19 @@
 <script lang="ts">
 	import autoAnimate from '@formkit/auto-animate';
 	import type { Link } from '@prisma/client';
-	import {
-		Button,
-		ButtonGroup,
-		FloatingLabelInput,
-		Helper,
-		Input,
-		Select,
-		Toggle,
-	} from 'flowbite-svelte';
+	import { TRPCClientError } from '@trpc/client';
+	import { Button, ButtonGroup, FloatingLabelInput, Input, Select, Toggle } from 'flowbite-svelte';
 	import toast from 'svelte-french-toast';
-	import { superForm } from 'sveltekit-superforms/client';
 
+	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import CTA from '$lib/components/CTA.svelte';
 	import SingleResult from '$lib/components/SingleResult.svelte';
+	import { trpc } from '$lib/trpc/client';
 
-	import type { ActionData, PageData } from './$types';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
-	export let form: ActionData;
 
 	let isUseCustomSlug = false;
 	let sortCategory = 'updatedDate-desc';
@@ -55,24 +48,27 @@
 			}
 		}) as Link[];
 
-	const {
-		form: formS,
-		errors,
-		constraints,
-		enhance,
-	} = superForm(data.form, {
-		taintedMessage: false,
-	});
+	let link: string;
+	let customName: string;
+	let addedLink: Link;
 
-	$: if (!form?.success && form?.message) {
-		toast.error(form.message, { position: 'top-right' });
-	}
+	const handleCreateLink = async () => {
+		try {
+			addedLink = await trpc($page).createLink.mutate({ link, customName });
+			await invalidate('links');
+			link = '';
+			customName = '';
+		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				toast.error(error.message, { position: 'top-right' });
+			}
+		}
+	};
 
-	$: if (form?.success) {
-		toast.success(`/${form.addedLink.slug} has been created successfully`, {
+	$: if (addedLink) {
+		toast.success(`/${addedLink.slug} has been created successfully`, {
 			position: 'top-right',
 		});
-		formS.set({ link: '', customName: '' });
 	}
 </script>
 
@@ -82,22 +78,17 @@
 
 <main>
 	<CTA />
-	<form method="POST" use:enhance class="mt-8" use:autoAnimate>
+	<form method="post" class="mt-8" use:autoAnimate on:submit|preventDefault={handleCreateLink}>
 		<div>
 			<ButtonGroup class="w-full">
 				<Input
 					id="link"
 					type="url"
 					name="link"
-					bind:value={$formS.link}
-					{...$constraints.link}
-					color={$errors.link || (form?.success && form?.message) ? 'red' : 'base'}
+					bind:value={link}
 					placeholder="Paste a link to shorten it" />
 				<Button color="blue" type="submit">Shorten</Button>
 			</ButtonGroup>
-			{#if $errors.link}
-				<Helper class="mt-2" color="red">{$errors.link.join(', ')}</Helper>
-			{/if}
 		</div>
 
 		{#if $page.data.session?.user}
@@ -108,25 +99,19 @@
 					placeholder="Your custom slug (Alphanumeric, hyphen, and underscore only)"
 					size="md"
 					name="customName"
-					bind:value={$formS.customName}
-					{...$constraints.customName}
-					color={form?.message?.includes('has been used') ? 'red' : 'base'}
+					bind:value={customName}
 					pattern="[a-zA-Z0-9_-]*" />
-
-				{#if $errors.customName}
-					<Helper class="mt-2" color="red">{$errors.customName.join(', ')}</Helper>
-				{/if}
 			{/if}
 		{/if}
 	</form>
 
 	<div class="mt-6 space-y-2" use:autoAnimate>
-		{#if form?.success === true && !$page.data.session}
+		{#if addedLink && !$page.data.session}
 			<SingleResult
-				slug={form.addedLink.slug}
-				link={form.addedLink.link}
-				createdDate={form.addedLink.createdAt}
-				updatedDate={form.addedLink.updatedAt} />
+				slug={addedLink.slug}
+				link={addedLink.link}
+				createdDate={addedLink.createdAt}
+				updatedDate={addedLink.updatedAt} />
 		{:else if $page.data.session && data.links && data.links.length > 0}
 			<div class="flex flex-col gap-2 items-center md:flex-row">
 				<div class="w-full md:w-auto grow">

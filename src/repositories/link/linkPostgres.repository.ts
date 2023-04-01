@@ -1,6 +1,11 @@
 import type { Link, Prisma, PrismaClient } from '@prisma/client';
 import { inject, injectable } from 'inversify';
 
+import BadRequestError from '$exceptions/BadRequestError';
+import type BaseError from '$exceptions/BaseError';
+import InternalServerError from '$exceptions/InternalServerError';
+import NotFoundError from '$exceptions/NotFoundError';
+import UnauthorizedError from '$exceptions/UnauthorizedError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
@@ -12,19 +17,19 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		this.db = db;
 	}
 
-	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, Error | null]> {
+	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, BaseError | null]> {
 		const addedLink = await this.db.link.create({
 			data: payload,
 		});
 
 		if (!addedLink) {
-			return [addedLink, new Error('Failed to create new link')];
+			return [addedLink, new InternalServerError('Failed to create new link')];
 		}
 
 		return [addedLink, null];
 	}
 
-	async verifySlugAvailability(slug: string): Promise<Error | null> {
+	async verifySlugAvailability(slug: string): Promise<BaseError | null> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -32,13 +37,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (link) {
-			return new Error(`/${slug} has been used`);
+			return new BadRequestError(`/${slug} has been used`);
 		}
 
 		return null;
 	}
 
-	async verifySlugOwnership(slug: string, email: string): Promise<Error | null> {
+	async verifySlugOwnership(slug: string, email: string): Promise<BaseError | null> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -49,13 +54,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return new Error("You don't have access to this resource");
+			return new UnauthorizedError("You don't have access to this resource");
 		}
 
 		return null;
 	}
 
-	async getAllLinks(email: string): Promise<[Link[], Error | null]> {
+	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
 		let links: Link[] = [];
 
 		try {
@@ -70,13 +75,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 				},
 			});
 		} catch (error) {
-			return [links, new Error('Failed to fetch all links')];
+			return [links, new InternalServerError('Failed to fetch all links')];
 		}
 
 		return [links, null];
 	}
 
-	async getLinkBySlug(slug: string): Promise<[Link | null, Error | null]> {
+	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -84,13 +89,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return [link, new Error('Link is not found')];
+			return [link, new NotFoundError('Link is not found')];
 		}
 
 		return [link, null];
 	}
 
-	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Error | null> {
+	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<BaseError | null> {
 		const updatedLink = await this.db.link.update({
 			where: {
 				slug: oldSlug,
@@ -101,7 +106,21 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!updatedLink) {
-			return new Error(`Failed to update /${oldSlug}`);
+			return new InternalServerError(`Failed to update /${oldSlug}`);
+		}
+
+		return null;
+	}
+
+	async deleteLinkBySlug(slug: string): Promise<BaseError | null> {
+		const deletedLink = await this.db.link.delete({
+			where: {
+				slug,
+			},
+		});
+
+		if (!deletedLink) {
+			return new InternalServerError(`Failed to delete /${slug}`);
 		}
 
 		return null;

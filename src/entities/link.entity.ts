@@ -8,6 +8,7 @@ export const linkSchema = z.object({
 });
 
 export const updateLinkSchema = z.object({
+	oldSlug: z.string({ required_error: 'Slug is required', invalid_type_error: 'Invalid type' }),
 	customName: z.string({ required_error: 'Slug is required', invalid_type_error: 'Invalid type' }),
 });
 
@@ -18,3 +19,12 @@ export function getUpdateLinkSchema(slug = '') {
 			.default(slug),
 	});
 }
+
+export const deleteLinkSchema = z.object({
+	slug: z.string({
+		invalid_type_error: 'Slug should be string',
+		required_error: 'Slug is required',
+	}),
+});
+
+export const getLinkSchema = deleteLinkSchema;

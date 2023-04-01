@@ -14,6 +14,7 @@ const config = {
 			$db: 'src/db',
 			$dto: 'src/dto',
 			$entities: 'src/entities',
+			$exceptions: 'src/exceptions',
 			$repositories: 'src/repositories',
 			$services: 'src/services',
 			$types: 'src/types',
