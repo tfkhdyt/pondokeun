@@ -79,7 +79,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		}
 	}
 
-	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
+	async getLinkBySlug(slug: string): Promise<Result<Link, BaseError>> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -87,10 +87,10 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return [link, new NotFoundError('Link is not found')];
+			return Result.err(new NotFoundError('Link is not found'));
 		}
 
-		return [link, null];
+		return Result.ok(link);
 	}
 
 	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<BaseError | null> {

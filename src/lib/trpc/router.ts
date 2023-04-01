@@ -32,18 +32,16 @@ export const router = t.router({
 	}),
 
 	getLinkBySlug: t.procedure.input(getLinkSchema).query(async ({ input }) => {
-		const { slug } = input;
-
-		const [link, err] = await linkService.getLinkBySlug(slug);
-		if (err instanceof BaseError) {
+		const link = await linkService.getLinkBySlug(input.slug);
+		if (link.isErr) {
 			throw new TRPCError({
-				code: err.statusCode,
-				message: err.message,
-				cause: err,
+				code: link.error.statusCode,
+				message: link.error.message,
+				cause: link.error,
 			});
 		}
 
-		return link as Link;
+		return link.value;
 	}),
 
 	createLink: t.procedure.input(linkSchema).mutation(async ({ input, ctx }) => {
