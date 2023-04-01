@@ -4,6 +4,7 @@ import { inject, injectable } from 'inversify';
 import BadRequestError from '$exceptions/BadRequestError';
 import type BaseError from '$exceptions/BaseError';
 import InternalServerError from '$exceptions/InternalServerError';
+import NotFoundError from '$exceptions/NotFoundError';
 import UnauthorizedError from '$exceptions/UnauthorizedError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
@@ -80,7 +81,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return [links, null];
 	}
 
-	async getLinkBySlug(slug: string): Promise<[Link | null, Error | null]> {
+	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -88,7 +89,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return [link, new Error('Link is not found')];
+			return [link, new NotFoundError('Link is not found')];
 		}
 
 		return [link, null];
