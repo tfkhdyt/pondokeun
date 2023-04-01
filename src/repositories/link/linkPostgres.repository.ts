@@ -95,7 +95,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return [link, null];
 	}
 
-	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Error | null> {
+	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<BaseError | null> {
 		const updatedLink = await this.db.link.update({
 			where: {
 				slug: oldSlug,
@@ -106,7 +106,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!updatedLink) {
-			return new Error(`Failed to update /${oldSlug}`);
+			return new InternalServerError(`Failed to update /${oldSlug}`);
 		}
 
 		return null;

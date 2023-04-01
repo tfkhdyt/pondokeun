@@ -8,6 +8,6 @@ export interface LinkRepository {
 	verifySlugOwnership(slug: string, email: string): Promise<BaseError | null>;
 	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
 	getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]>;
-	updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Error | null>;
+	updateLinkBySlug(oldSlug: string, newSlug: string): Promise<BaseError | null>;
 	deleteLinkBySlug(slug: string): Promise<BaseError | null>;
 }
