@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file. See [conven
 
 - - -
 ## 1.0.0 - 2023-04-01
+### Notable Changes
+- Switch to tRPC
 #### Bug Fixes
 - **(SingleResult)** add "break-all" class to link element - (d7fca87) - tfkhdyt
 - **(exceptions)** change error code from UNAUTHORIZED to FORBIDDEN in UnauthorizedError - (aabfdf3) - tfkhdyt
