@@ -2,7 +2,12 @@ import type { Link } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
 import { container } from '$containers/inversify.container';
-import { deleteLinkSchema, getLinkSchema, linkSchema } from '$entities/link.entity';
+import {
+	deleteLinkSchema,
+	getLinkSchema,
+	linkSchema,
+	updateLinkSchema,
+} from '$entities/link.entity';
 import BaseError from '$exceptions/BaseError';
 import type { ILinkService } from '$services/link.service';
 import { TYPES } from '$types/inversify.type';
@@ -58,6 +63,22 @@ export const router = t.router({
 
 		return addedLink as Link;
 	}),
+	updateLink: t.procedure
+		.use(auth)
+		.input(updateLinkSchema)
+		.mutation(async ({ input, ctx }) => {
+			const { oldSlug, customName } = input;
+			const { userEmail } = ctx;
+
+			const err = await linkService.updateLinkBySlug(oldSlug, customName, userEmail);
+			if (err instanceof BaseError) {
+				throw new TRPCError({
+					code: err.statusCode,
+					message: err.message,
+					cause: err,
+				});
+			}
+		}),
 	deleteLink: t.procedure
 		.use(auth)
 		.input(deleteLinkSchema)
