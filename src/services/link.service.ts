@@ -2,6 +2,7 @@ import type { Link, Prisma } from '@prisma/client';
 import { inject, injectable } from 'inversify';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
+import BadRequestError from '$exceptions/BadRequestError';
 import BaseError from '$exceptions/BaseError';
 import UnauthenticatedError from '$exceptions/UnauthenticatedError';
 import type { LinkRepository } from '$repositories';
@@ -74,10 +75,15 @@ export default class LinkService implements ILinkService {
 		newSlug: string,
 		email: string
 	): Promise<BaseError | null> {
-		const err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
-		if (err instanceof BaseError) {
-			return err;
+		let err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
+		if (err instanceof BaseError) return err;
+
+		if (oldSlug === newSlug) {
+			return new BadRequestError('Old slug and new slug must be different');
 		}
+
+		err = await this.linkRepo.verifySlugAvailability(newSlug);
+		if (err instanceof BaseError) return err;
 
 		return this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
 	}
