@@ -30,6 +30,7 @@ export const router = t.router({
 
 		return links;
 	}),
+
 	getLinkBySlug: t.procedure.input(getLinkSchema).query(async ({ input }) => {
 		const { slug } = input;
 
@@ -44,6 +45,7 @@ export const router = t.router({
 
 		return link as Link;
 	}),
+
 	createLink: t.procedure.input(linkSchema).mutation(async ({ input, ctx }) => {
 		const { link, customName } = input;
 		const { session } = ctx;
@@ -63,6 +65,7 @@ export const router = t.router({
 
 		return addedLink as Link;
 	}),
+
 	updateLink: t.procedure
 		.use(auth)
 		.input(updateLinkSchema)
@@ -79,6 +82,7 @@ export const router = t.router({
 				});
 			}
 		}),
+
 	deleteLink: t.procedure
 		.use(auth)
 		.input(deleteLinkSchema)
