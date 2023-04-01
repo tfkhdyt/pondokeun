@@ -1,4 +1,3 @@
-import type { Link } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
 import { container } from '$containers/inversify.container';
@@ -48,20 +47,20 @@ export const router = t.router({
 		const { link, customName } = input;
 		const { session } = ctx;
 
-		const [addedLink, err] = await linkService.createLink({
+		const addedLink = await linkService.createLink({
 			link,
 			slug: customName,
 			email: session?.user?.email,
 		});
-		if (err instanceof BaseError) {
+		if (addedLink.isErr) {
 			throw new TRPCError({
-				code: err.statusCode,
-				message: err.message,
-				cause: err,
+				code: addedLink.error.statusCode,
+				message: addedLink.error.message,
+				cause: addedLink.error,
 			});
 		}
 
-		return addedLink as Link;
+		return addedLink.value;
 	}),
 
 	updateLink: t.procedure

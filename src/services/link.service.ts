@@ -1,6 +1,6 @@
 import type { Link, Prisma } from '@prisma/client';
 import { inject, injectable } from 'inversify';
-import type { Result } from 'true-myth';
+import { Result } from 'true-myth';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
 import BadRequestError from '$exceptions/BadRequestError';
@@ -10,7 +10,7 @@ import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
 export interface ILinkService {
-	createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]>;
+	createLink(payload: CreateLinkRequest): Promise<Result<Link, BaseError>>;
 	getAllLinks(email: string): Promise<Result<Link[], BaseError>>;
 	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<BaseError | null>;
@@ -25,15 +25,15 @@ export default class LinkService implements ILinkService {
 		this.linkRepo = linkRepo;
 	}
 
-	async createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]> {
+	async createLink(payload: CreateLinkRequest): Promise<Result<Link, BaseError>> {
 		if (payload.slug) {
 			if (!payload.email) {
-				throw new UnauthenticatedError('You should sign in first');
+				return Result.err(new UnauthenticatedError('You should sign in first'));
 			}
 
 			const err = await this.linkRepo.verifySlugAvailability(payload.slug);
-			if (err instanceof BaseError) {
-				return [null, err];
+			if (err.isJust) {
+				return Result.err(err.value);
 			}
 		}
 
@@ -55,12 +55,12 @@ export default class LinkService implements ILinkService {
 			};
 		}
 
-		const [addedLink, err] = await this.linkRepo.createLink(newLink);
-		if (err) {
-			return [addedLink, err];
+		const addedLink = await this.linkRepo.createLink(newLink);
+		if (addedLink.isErr) {
+			return Result.err(addedLink.error);
 		}
 
-		return [addedLink, null];
+		return Result.ok(addedLink.value);
 	}
 
 	getAllLinks(email: string): Promise<Result<Link[], BaseError>> {

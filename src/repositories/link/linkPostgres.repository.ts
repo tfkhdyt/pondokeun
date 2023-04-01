@@ -1,6 +1,6 @@
 import type { Link, Prisma, PrismaClient } from '@prisma/client';
 import { inject, injectable } from 'inversify';
-import { Result } from 'true-myth';
+import { Maybe, Result } from 'true-myth';
 
 import BadRequestError from '$exceptions/BadRequestError';
 import type BaseError from '$exceptions/BaseError';
@@ -18,19 +18,19 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		this.db = db;
 	}
 
-	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, BaseError | null]> {
+	async createLink(payload: Prisma.LinkCreateInput): Promise<Result<Link, BaseError>> {
 		const addedLink = await this.db.link.create({
 			data: payload,
 		});
 
 		if (!addedLink) {
-			return [addedLink, new InternalServerError('Failed to create new link')];
+			return Result.err(new InternalServerError('Failed to create new link'));
 		}
 
-		return [addedLink, null];
+		return Result.ok(addedLink);
 	}
 
-	async verifySlugAvailability(slug: string): Promise<BaseError | null> {
+	async verifySlugAvailability(slug: string): Promise<Maybe<BaseError>> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -38,10 +38,10 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (link) {
-			return new BadRequestError(`/${slug} has been used`);
+			return Maybe.just(new BadRequestError(`/${slug} has been used`));
 		}
 
-		return null;
+		return Maybe.nothing();
 	}
 
 	async verifySlugOwnership(slug: string, email: string): Promise<BaseError | null> {
