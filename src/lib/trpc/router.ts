@@ -19,16 +19,16 @@ const linkService = container.get<ILinkService>(TYPES.ILinkService);
 
 export const router = t.router({
 	getAllLinks: t.procedure.use(auth).query(async ({ ctx }) => {
-		const [links, err] = await linkService.getAllLinks(ctx.userEmail);
-		if (err instanceof BaseError) {
+		const links = await linkService.getAllLinks(ctx.userEmail);
+		if (links.isErr) {
 			throw new TRPCError({
-				code: err.statusCode,
-				message: err.message,
-				cause: err,
+				code: links.error.statusCode,
+				message: links.error.message,
+				cause: links.error,
 			});
 		}
 
-		return links;
+		return links.value;
 	}),
 
 	getLinkBySlug: t.procedure.input(getLinkSchema).query(async ({ input }) => {

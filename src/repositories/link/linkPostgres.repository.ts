@@ -1,5 +1,6 @@
 import type { Link, Prisma, PrismaClient } from '@prisma/client';
 import { inject, injectable } from 'inversify';
+import { Result } from 'true-myth';
 
 import BadRequestError from '$exceptions/BadRequestError';
 import type BaseError from '$exceptions/BaseError';
@@ -60,11 +61,9 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return null;
 	}
 
-	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
-		let links: Link[] = [];
-
+	async getAllLinks(email: string): Promise<Result<Link[], BaseError>> {
 		try {
-			links = await this.db.link.findMany({
+			const links = await this.db.link.findMany({
 				where: {
 					user: {
 						email,
@@ -74,11 +73,10 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 					updatedAt: 'desc',
 				},
 			});
+			return Result.ok(links);
 		} catch (error) {
-			return [links, new InternalServerError('Failed to fetch all links')];
+			return Result.err(new InternalServerError('Failed to fetch all links'));
 		}
-
-		return [links, null];
 	}
 
 	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {

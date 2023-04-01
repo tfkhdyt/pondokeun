@@ -1,5 +1,6 @@
 import type { Link, Prisma } from '@prisma/client';
 import { inject, injectable } from 'inversify';
+import type { Result } from 'true-myth';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
 import BadRequestError from '$exceptions/BadRequestError';
@@ -10,7 +11,7 @@ import { TYPES } from '$types/inversify.type';
 
 export interface ILinkService {
 	createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]>;
-	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
+	getAllLinks(email: string): Promise<Result<Link[], BaseError>>;
 	getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<BaseError | null>;
 	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
@@ -62,7 +63,7 @@ export default class LinkService implements ILinkService {
 		return [addedLink, null];
 	}
 
-	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
+	getAllLinks(email: string): Promise<Result<Link[], BaseError>> {
 		return this.linkRepo.getAllLinks(email);
 	}
 
