@@ -2,6 +2,61 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 1.0.0 - 2023-04-01
+#### Bug Fixes
+- **(SingleResult)** add "break-all" class to link element - (d7fca87) - tfkhdyt
+- **(exceptions)** change error code from UNAUTHORIZED to FORBIDDEN in UnauthorizedError - (aabfdf3) - tfkhdyt
+- **(hooks.server.ts)** add type import for Adapter from '@auth/core/adapters' and cast PrismaAdapter to Adapter in SvelteKitAuth options - (1693bd5) - tfkhdyt
+- **(link.service.ts)** add check for old and new slug being different in updateLinkBySlug method. Add error handling for slug availability check. Add BadRequestError import. - (cf222f8) - tfkhdyt
+- **(link.service.ts)** change UnauthorizedError to UnauthenticatedError - (e9bc98a) - tfkhdyt
+- **(page-server)** fix unsigned in user meet internal server error page - (4d370ed) - tfkhdyt
+- **(root-page)** make search feature case insensitive - (b869d49) - tfkhdyt
+#### Features
+- **(+page.server.ts)** import reflect-metadata package to enable decorators usage - (693efb8) - tfkhdyt
+- **(NotFoundError.ts)** add NotFoundError class that extends BaseError class - (979ee20) - tfkhdyt
+- **(client.ts)** add SuperJSON as a transformer for trpc client requests - (7c999b3) - tfkhdyt
+- **(exceptions)** add custom error classes for BadRequest, InternalServerError, and UnauthorizedError - (0076d1a) - tfkhdyt
+- **(inversify.container.ts)** import reflect-metadata package - (309e4e2) - tfkhdyt
+- **(link-repository)** add deleteLinkBySlug method to LinkRepository interface - (bbd7b9f) - tfkhdyt
+- **(link.service.ts)** add deleteLinkBySlug method to ILinkService and LinkService classes - (4d866b3) - tfkhdyt
+- **(middleware.ts)** add auth middleware to check if user is authenticated and throw an error if not - (949ccf7) - tfkhdyt
+- **(package.json)** add superjson package to dependencies - (f10976d) - tfkhdyt
+- **(package.json)** add @trpc/client, @trpc/server, and trpc-sveltekit dependencies - (559ffad) - tfkhdyt
+- **(router.ts)** add check for user authentication before deleting a link by slug. If user is not authenticated, throw an error with code 'UNAUTHORIZED' and message 'You should sign in first'. - (aa27152) - tfkhdyt
+- **(router.ts)** add deleteLink procedure to router with input validation using zod - (3e23417) - tfkhdyt
+- **(router.ts)** add createLink mutation to router with input validation and error handling - (b0c707e) - tfkhdyt
+- **(trpc)** add updateLink router - (5aa0afe) - tfkhdyt
+- **(trpc)** add trpc-sveltekit to handle server-side requests - (4e201e6) - tfkhdyt
+- setup svelte-seo - (fae1fd2) - tfkhdyt
+#### Miscellaneous Chores
+- **(package.json)** update devDependencies to latest versions - (a322422) - tfkhdyt
+- **(pnpm-lock.yaml)** regenerate lock file for pnpm v8 - (c4bdb60) - tfkhdyt
+- **(svelte.config.js)** add $exceptions path alias to svelte config file - (b8875ff) - tfkhdyt
+#### Refactoring
+- **(+page.server.ts)** use trpc router and context to get link by slug and handle errors with TRPCError class - (d97edd4) - tfkhdyt
+- **(+page.server.ts)** remove unused imports and actions from page server route - (757d3ee) - tfkhdyt
+- **(+page.svelte)** remove unused errors variable - (6cb914f) - tfkhdyt
+- **(+page.svelte)** use trpc client to create a link and invalidate links cache on success - (4474912) - tfkhdyt
+- **(DeleteModal.svelte)** remove unused import of deleteLink from utils.ts - (0e759c8) - tfkhdyt
+- **(edit-page)** change update method from action to trpc - (bb1bddb) - tfkhdyt
+- **(edit-server)** directly return trpc value - (d54be11) - tfkhdyt
+- **(edit-server)** implement trpc route to edit data - (caaad6c) - tfkhdyt
+- **(link-repository)** change updateLinkBySlug return type from Error to BaseError - (25c8335) - tfkhdyt
+- **(link-repository)** change Error to BaseError in LinkRepository interface - (ab6e21e) - tfkhdyt
+- **(link.service.ts)** simplify getAllLinks and getLinkBySlug methods by returning the result of linkRepo methods directly - (5320188) - tfkhdyt
+- **(link.service.ts)** change Error type to BaseError type in getLinkBySlug method signature - (c56216e) - tfkhdyt
+- **(link.service.ts)** change return type of createLink and getAllLinks methods to use BaseError instead of Error - (715c67f) - tfkhdyt
+- **(link.service.ts)** use logical OR instead of nullish coalescing operator in createLink method - (fb1a048) - tfkhdyt
+- **(linkPostgres.repository.ts)** change Error to BaseError in verifySlugOwnership and deleteLinkBySlug methods - (667b93a) - tfkhdyt
+- **(linkPostgres.repository.ts)** change Error to BaseError in LinkRepositoryPostgres class methods - (96decc6) - tfkhdyt
+- **(page)** move page load function from +page.ts to +page.server.ts - (bdf4774) - tfkhdyt
+- **(page)** remove server-side code and replace with client-side code - (9f72a01) - tfkhdyt
+- **(router.ts)** import Link type from @prisma/client - (5f39899) - tfkhdyt
+- **(router.ts)** move t variable to a separate file - (67f932e) - tfkhdyt
+- **(utils.ts)** use trpc client to delete link and handle errors with TRPCClientError - (4e951d8) - tfkhdyt
+
+- - -
+
 ## 0.4.0 - 2023-03-29
 #### Bug Fixes
 - **(404-page)** reduce text size - (a885d2d) - tfkhdyt
