@@ -11,7 +11,7 @@ export interface ILinkService {
 	createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]>;
 	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
 	getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]>;
-	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null>;
+	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<BaseError | null>;
 	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
 }
 
@@ -62,29 +62,24 @@ export default class LinkService implements ILinkService {
 	}
 
 	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
-		const [links, err] = await this.linkRepo.getAllLinks(email);
-
-		return [links, err];
+		return this.linkRepo.getAllLinks(email);
 	}
 
 	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
-		const [link, err] = await this.linkRepo.getLinkBySlug(slug);
-
-		return [link, err];
+		return this.linkRepo.getLinkBySlug(slug);
 	}
 
-	async updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null> {
+	async updateLinkBySlug(
+		oldSlug: string,
+		newSlug: string,
+		email: string
+	): Promise<BaseError | null> {
 		const err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
-		if (err instanceof Error) {
+		if (err instanceof BaseError) {
 			return err;
 		}
 
-		const err2 = await this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
-		if (err2 instanceof Error) {
-			return err2;
-		}
-
-		return null;
+		return this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
 	}
 
 	async deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null> {
