@@ -10,7 +10,7 @@ import { TYPES } from '$types/inversify.type';
 export interface ILinkService {
 	createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]>;
 	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
-	getLinkBySlug(slug: string): Promise<[Link | null, Error | null]>;
+	getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Error | null>;
 	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
 }
@@ -67,7 +67,7 @@ export default class LinkService implements ILinkService {
 		return [links, err];
 	}
 
-	async getLinkBySlug(slug: string): Promise<[Link | null, Error | null]> {
+	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
 		const [link, err] = await this.linkRepo.getLinkBySlug(slug);
 
 		return [link, err];
