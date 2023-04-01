@@ -5,8 +5,11 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	event.depends('links');
+	const { session } = await event.parent();
 
-	return {
-		links: router.createCaller(await createContext(event)).getAllLinks(),
-	};
+	if (session) {
+		return {
+			links: router.createCaller(await createContext(event)).getAllLinks(),
+		};
+	}
 };
