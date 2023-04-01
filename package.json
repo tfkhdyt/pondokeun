@@ -56,6 +56,7 @@
 		"reflect-metadata": "^0.1.13",
 		"superjson": "^1.12.2",
 		"svelte-french-toast": "1.0.4-beta.0",
-		"trpc-sveltekit": "^3.5.2"
+		"trpc-sveltekit": "^3.5.2",
+		"true-myth": "^6.2.0"
 	}
 }
