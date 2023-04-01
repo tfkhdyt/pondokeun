@@ -25,3 +25,5 @@ export const deleteLinkSchema = z.object({
 		required_error: 'Slug is required',
 	}),
 });
+
+export const getLinkSchema = deleteLinkSchema;
