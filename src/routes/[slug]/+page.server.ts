@@ -1,22 +1,23 @@
 import { redirect } from '@sveltejs/kit';
+import { TRPCError } from '@trpc/server';
 
-import { container } from '$containers/inversify.container';
-import type { ILinkService } from '$services/link.service';
-import { TYPES } from '$types/inversify.type';
+import { createContext } from '$lib/trpc/context';
+import { router } from '$lib/trpc/router';
 
 import type { PageServerLoad } from './$types';
 
-const linkService = container.get<ILinkService>(TYPES.ILinkService);
+export const load = (async (event) => {
+	const { slug } = event.params;
 
-export const load = (async ({ params }) => {
-	const { slug } = params;
-
-	const [link, err] = await linkService.getLinkBySlug(slug);
-	if (err instanceof Error) {
-		return {
-			message: err.message,
-		};
+	try {
+		const link = await router.createCaller(await createContext(event)).getLinkBySlug({ slug });
+		throw redirect(301, link.link);
+	} catch (error) {
+		if (error instanceof TRPCError) {
+			return {
+				message: error.message,
+			};
+		}
+		throw error;
 	}
-
-	throw redirect(301, link?.link as string);
 }) satisfies PageServerLoad;
