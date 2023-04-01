@@ -1,46 +1,38 @@
 <script lang="ts">
-	import {
-		Breadcrumb,
-		BreadcrumbItem,
-		Button,
-		Heading,
-		Helper,
-		Input,
-		Label,
-		P,
-	} from 'flowbite-svelte';
+	import { TRPCClientError } from '@trpc/client';
+	import { Breadcrumb, BreadcrumbItem, Button, Heading, Input, Label, P } from 'flowbite-svelte';
 	import toast from 'svelte-french-toast';
-	import { superForm } from 'sveltekit-superforms/client';
 
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { trpc } from '$lib/trpc/client';
 
-	import type { ActionData, PageData } from './$types';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
-	export let form: ActionData;
+
 	let { slug } = $page.params;
 	let linkMemo = data.link?.link;
 	let createdAtMemo = data.link?.createdAt as Date;
 	let updatedAtMemo = data.link?.updatedAt as Date;
 
-	const {
-		form: formS,
-		errors,
-		constraints,
-		enhance,
-	} = superForm(data.form, { taintedMessage: false });
+	let customName = slug;
 
-	$: if (!form?.success && form?.message) {
-		toast.error(form.message, { position: 'top-right' });
-	}
+	const handleUpdateLink = async () => {
+		try {
+			await trpc($page).updateLink.mutate({ oldSlug: slug, customName });
+			await invalidate('links');
 
-	$: if (form?.success) {
-		goto('/');
-		toast.success('Update success', {
-			position: 'top-right',
-		});
-	}
+			toast.success(`/${slug} has been updated to /${customName}`, {
+				position: 'top-right',
+			});
+			await goto('/');
+		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				toast.error(error.message, { position: 'top-right' });
+			}
+		}
+	};
 </script>
 
 <svelte:head>
@@ -54,7 +46,7 @@
 		<BreadcrumbItem href="/{slug}/edit">Edit</BreadcrumbItem>
 	</Breadcrumb>
 	<Heading tag="h2">Edit <span class="text-[#1a56db]">/{slug}</span></Heading>
-	<form class="pt-4 space-y-4" method="POST" use:enhance>
+	<form class="pt-4 space-y-4" method="POST" on:submit|preventDefault={handleUpdateLink}>
 		<div>
 			<Label defaultClass="mb-2 text-base font-medium block">Link</Label>
 			<Input type="url" size="md" disabled readonly value={linkMemo} />
@@ -67,13 +59,8 @@
 				placeholder="Your custom slug (Alphanumeric, hyphen, and underscore only)"
 				id="slug"
 				size="md"
-				bind:value={$formS.customName}
-				color={$errors.customName || (form?.success && form?.message) ? 'red' : 'base'}
-				pattern="[a-zA-Z0-9_-]*"
-				{...$constraints.customName} />
-			{#if $errors.customName}
-				<Helper class="mt-2" color="red">{$errors.customName.join(', ')}</Helper>
-			{/if}
+				bind:value={customName}
+				pattern="[a-zA-Z0-9_-]*" />
 		</div>
 
 		<div class="space-y-4">
