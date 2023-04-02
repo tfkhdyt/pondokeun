@@ -60,6 +60,12 @@
 			customName = '';
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
+				const errors = JSON.parse(error.message) as { message: string }[];
+				if (Array.isArray(errors)) {
+					for (const err of errors) {
+						return toast.error(err.message, { position: 'top-right' });
+					}
+				}
 				toast.error(error.message, { position: 'top-right' });
 			}
 		}
