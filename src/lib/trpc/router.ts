@@ -19,6 +19,7 @@ export const router = t.router({
 	getAllLinks: t.procedure.use(auth).query(async ({ ctx }) => {
 		const links = await linkService.getAllLinks(ctx.userEmail);
 		if (links.isErr) {
+			console.error('Router error:', links.error);
 			throw new TRPCError({
 				code: links.error.statusCode,
 				message: links.error.message,
@@ -94,6 +95,18 @@ export const router = t.router({
 					cause: err.value,
 				});
 		}),
+
+	redirect: t.procedure.input(getLinkSchema).mutation(async ({ input }) => {
+		const link = await linkService.redirect(input.slug);
+		if (link.isErr)
+			throw new TRPCError({
+				code: link.error.statusCode,
+				message: link.error.message,
+				cause: link.error,
+			});
+
+		return link.value;
+	}),
 });
 
 export type Router = typeof router;

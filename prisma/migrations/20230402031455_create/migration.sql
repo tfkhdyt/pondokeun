@@ -7,7 +7,7 @@ CREATE TABLE "Account" (
     "providerAccountId" TEXT NOT NULL,
     "refresh_token" TEXT,
     "access_token" TEXT,
-    "expires_at" INTEGER,
+    "expires_in" INTEGER,
     "token_type" TEXT,
     "scope" TEXT,
     "id_token" TEXT,
@@ -56,6 +56,15 @@ CREATE TABLE "links" (
     CONSTRAINT "links_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "VisitorsNumber" (
+    "id" SERIAL NOT NULL,
+    "value" INTEGER NOT NULL DEFAULT 0,
+    "linkId" INTEGER NOT NULL,
+
+    CONSTRAINT "VisitorsNumber_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
 
@@ -74,6 +83,9 @@ CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationTok
 -- CreateIndex
 CREATE UNIQUE INDEX "links_slug_key" ON "links"("slug");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "VisitorsNumber_linkId_key" ON "VisitorsNumber"("linkId");
+
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -82,3 +94,6 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "links" ADD CONSTRAINT "links_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "VisitorsNumber" ADD CONSTRAINT "VisitorsNumber_linkId_fkey" FOREIGN KEY ("linkId") REFERENCES "links"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

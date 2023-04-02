@@ -59,13 +59,23 @@ model VerificationToken {
 }
 
 model Link {
-  id        Int      @id @default(autoincrement())
-  slug      String   @unique
-  link      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             Int             @id @default(autoincrement())
+  slug           String          @unique
+  link           String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now()) @updatedAt
+  userId         String?
+  user           User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visitorsNumber VisitorsNumber?
 
   @@map("links")
+}
+
+model VisitorsNumber {
+  id     Int  @id @default(autoincrement())
+  value  Int  @default(0)
+  link   Link @relation(fields: [linkId], references: [id])
+  linkId Int  @unique
+
+  @@map("visitors_number")
 }

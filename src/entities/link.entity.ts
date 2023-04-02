@@ -1,3 +1,4 @@
+import type { Link, VisitorsNumber } from '@prisma/client';
 import { z } from 'zod';
 
 export const linkSchema = z.object({
@@ -28,3 +29,7 @@ export const deleteLinkSchema = z.object({
 });
 
 export const getLinkSchema = deleteLinkSchema;
+
+export type LinkWithVisitorsNumber = Link & {
+	visitorsNumber: VisitorsNumber | null;
+};

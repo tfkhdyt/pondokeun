@@ -3,29 +3,36 @@ import { inject, injectable } from 'inversify';
 import { Maybe, Result } from 'true-myth';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
+import type { LinkWithVisitorsNumber } from '$entities/link.entity';
 import BadRequestError from '$exceptions/BadRequestError';
 import type BaseError from '$exceptions/BaseError';
 import UnauthenticatedError from '$exceptions/UnauthenticatedError';
-import type { LinkRepository } from '$repositories';
+import type { LinkRepository, VisitorsNumberRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
 export interface ILinkService {
-	createLink(payload: CreateLinkRequest): Promise<Result<Link, BaseError>>;
-	getAllLinks(email: string): Promise<Result<Link[], BaseError>>;
+	createLink(payload: CreateLinkRequest): Promise<Result<LinkWithVisitorsNumber, BaseError>>;
+	getAllLinks(email: string): Promise<Result<LinkWithVisitorsNumber[], BaseError>>;
 	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Maybe<BaseError>>;
 	deleteLinkBySlug(slug: string, email: string): Promise<Maybe<BaseError>>;
+	redirect(slug: string): Promise<Result<string, BaseError>>;
 }
 
 @injectable()
 export default class LinkService implements ILinkService {
 	private linkRepo: LinkRepository;
+	private visitorsNumberRepo: VisitorsNumberRepository;
 
-	constructor(@inject(TYPES.LinkRepository) linkRepo: LinkRepository) {
+	constructor(
+		@inject(TYPES.LinkRepository) linkRepo: LinkRepository,
+		@inject(TYPES.VisitorsNumberRepository) visitorsNumberRepo: VisitorsNumberRepository
+	) {
 		this.linkRepo = linkRepo;
+		this.visitorsNumberRepo = visitorsNumberRepo;
 	}
 
-	async createLink(payload: CreateLinkRequest): Promise<Result<Link, BaseError>> {
+	async createLink(payload: CreateLinkRequest): Promise<Result<LinkWithVisitorsNumber, BaseError>> {
 		if (payload.slug) {
 			if (!payload.email) {
 				return Result.err(new UnauthenticatedError('You should sign in first'));
@@ -52,6 +59,11 @@ export default class LinkService implements ILinkService {
 						email: payload.email,
 					},
 				},
+				visitorsNumber: {
+					create: {
+						value: 0,
+					},
+				},
 			};
 		}
 
@@ -63,7 +75,7 @@ export default class LinkService implements ILinkService {
 		return Result.ok(addedLink.value);
 	}
 
-	getAllLinks(email: string): Promise<Result<Link[], BaseError>> {
+	getAllLinks(email: string): Promise<Result<LinkWithVisitorsNumber[], BaseError>> {
 		return this.linkRepo.getAllLinks(email);
 	}
 
@@ -101,5 +113,15 @@ export default class LinkService implements ILinkService {
 		}
 
 		return this.linkRepo.deleteLinkBySlug(slug);
+	}
+
+	async redirect(slug: string): Promise<Result<string, BaseError>> {
+		const link = await this.linkRepo.getLinkBySlug(slug);
+		if (link.isErr) return Result.err(link.error);
+
+		const err = await this.visitorsNumberRepo.increment(link.value.id);
+		if (err.isJust) return Result.err(err.value);
+
+		return Result.ok(link.value.link);
 	}
 }

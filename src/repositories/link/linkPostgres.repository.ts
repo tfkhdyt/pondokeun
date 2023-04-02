@@ -2,6 +2,7 @@ import type { Link, Prisma, PrismaClient } from '@prisma/client';
 import { inject, injectable } from 'inversify';
 import { Maybe, Result } from 'true-myth';
 
+import type { LinkWithVisitorsNumber } from '$entities/link.entity';
 import BadRequestError from '$exceptions/BadRequestError';
 import type BaseError from '$exceptions/BaseError';
 import InternalServerError from '$exceptions/InternalServerError';
@@ -18,9 +19,14 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		this.db = db;
 	}
 
-	async createLink(payload: Prisma.LinkCreateInput): Promise<Result<Link, BaseError>> {
+	async createLink(
+		payload: Prisma.LinkCreateInput
+	): Promise<Result<LinkWithVisitorsNumber, BaseError>> {
 		const addedLink = await this.db.link.create({
 			data: payload,
+			include: {
+				visitorsNumber: true,
+			},
 		});
 
 		if (!addedLink) {
@@ -61,7 +67,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return Maybe.nothing();
 	}
 
-	async getAllLinks(email: string): Promise<Result<Link[], BaseError>> {
+	async getAllLinks(email: string): Promise<Result<LinkWithVisitorsNumber[], BaseError>> {
 		try {
 			const links = await this.db.link.findMany({
 				where: {
@@ -72,9 +78,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 				orderBy: {
 					updatedAt: 'desc',
 				},
+				include: {
+					visitorsNumber: true,
+				},
 			});
 			return Result.ok(links);
 		} catch (error) {
+			console.error({ error });
 			return Result.err(new InternalServerError('Failed to fetch all links'));
 		}
 	}
