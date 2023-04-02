@@ -1,6 +1,8 @@
 import type { Link, Prisma, PrismaClient } from '@prisma/client';
 import { inject, injectable } from 'inversify';
+import { Maybe, Result } from 'true-myth';
 
+import type { LinkWithVisitorsNumber } from '$entities/link.entity';
 import BadRequestError from '$exceptions/BadRequestError';
 import type BaseError from '$exceptions/BaseError';
 import InternalServerError from '$exceptions/InternalServerError';
@@ -17,19 +19,24 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		this.db = db;
 	}
 
-	async createLink(payload: Prisma.LinkCreateInput): Promise<[Link, BaseError | null]> {
+	async createLink(
+		payload: Prisma.LinkCreateInput
+	): Promise<Result<LinkWithVisitorsNumber, BaseError>> {
 		const addedLink = await this.db.link.create({
 			data: payload,
+			include: {
+				visitorsNumber: true,
+			},
 		});
 
 		if (!addedLink) {
-			return [addedLink, new InternalServerError('Failed to create new link')];
+			return Result.err(new InternalServerError('Failed to create new link'));
 		}
 
-		return [addedLink, null];
+		return Result.ok(addedLink);
 	}
 
-	async verifySlugAvailability(slug: string): Promise<BaseError | null> {
+	async verifySlugAvailability(slug: string): Promise<Maybe<BaseError>> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -37,13 +44,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (link) {
-			return new BadRequestError(`/${slug} has been used`);
+			return Maybe.just(new BadRequestError(`/${slug} has been used`));
 		}
 
-		return null;
+		return Maybe.nothing();
 	}
 
-	async verifySlugOwnership(slug: string, email: string): Promise<BaseError | null> {
+	async verifySlugOwnership(slug: string, email: string): Promise<Maybe<BaseError>> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -54,17 +61,15 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return new UnauthorizedError("You don't have access to this resource");
+			return Maybe.just(new UnauthorizedError("You don't have access to this resource"));
 		}
 
-		return null;
+		return Maybe.nothing();
 	}
 
-	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
-		let links: Link[] = [];
-
+	async getAllLinks(email: string): Promise<Result<LinkWithVisitorsNumber[], BaseError>> {
 		try {
-			links = await this.db.link.findMany({
+			const links = await this.db.link.findMany({
 				where: {
 					user: {
 						email,
@@ -73,15 +78,18 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 				orderBy: {
 					updatedAt: 'desc',
 				},
+				include: {
+					visitorsNumber: true,
+				},
 			});
+			return Result.ok(links);
 		} catch (error) {
-			return [links, new InternalServerError('Failed to fetch all links')];
+			console.error({ error });
+			return Result.err(new InternalServerError('Failed to fetch all links'));
 		}
-
-		return [links, null];
 	}
 
-	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
+	async getLinkBySlug(slug: string): Promise<Result<Link, BaseError>> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -89,13 +97,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return [link, new NotFoundError('Link is not found')];
+			return Result.err(new NotFoundError('Link is not found'));
 		}
 
-		return [link, null];
+		return Result.ok(link);
 	}
 
-	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<BaseError | null> {
+	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Maybe<BaseError>> {
 		const updatedLink = await this.db.link.update({
 			where: {
 				slug: oldSlug,
@@ -106,13 +114,13 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!updatedLink) {
-			return new InternalServerError(`Failed to update /${oldSlug}`);
+			return Maybe.just(new InternalServerError(`Failed to update /${oldSlug}`));
 		}
 
-		return null;
+		return Maybe.nothing();
 	}
 
-	async deleteLinkBySlug(slug: string): Promise<BaseError | null> {
+	async deleteLinkBySlug(slug: string): Promise<Maybe<BaseError>> {
 		const deletedLink = await this.db.link.delete({
 			where: {
 				slug,
@@ -120,9 +128,9 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!deletedLink) {
-			return new InternalServerError(`Failed to delete /${slug}`);
+			return Maybe.just(new InternalServerError(`Failed to delete /${slug}`));
 		}
 
-		return null;
+		return Maybe.nothing();
 	}
 }

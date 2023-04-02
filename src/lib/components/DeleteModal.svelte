@@ -4,6 +4,7 @@
 	import toast from 'svelte-french-toast';
 
 	import { invalidate } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { trpc } from '$lib/trpc/client';
 
 	export let popupModal: boolean;
@@ -11,7 +12,7 @@
 
 	const deleteLink = async (slug: string) => {
 		try {
-			await trpc().deleteLink.mutate({ slug });
+			await trpc($page).deleteLink.mutate({ slug });
 			await invalidate('links');
 			toast.success(`/${slug} has been deleted successfully`, { position: 'top-right' });
 		} catch (error) {

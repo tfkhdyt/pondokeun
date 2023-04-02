@@ -1,4 +1,3 @@
-import type { Link } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
 import { container } from '$containers/inversify.container';
@@ -8,7 +7,6 @@ import {
 	linkSchema,
 	updateLinkSchema,
 } from '$entities/link.entity';
-import BaseError from '$exceptions/BaseError';
 import type { ILinkService } from '$services/link.service';
 import { TYPES } from '$types/inversify.type';
 
@@ -19,51 +17,50 @@ const linkService = container.get<ILinkService>(TYPES.ILinkService);
 
 export const router = t.router({
 	getAllLinks: t.procedure.use(auth).query(async ({ ctx }) => {
-		const [links, err] = await linkService.getAllLinks(ctx.userEmail);
-		if (err instanceof BaseError) {
+		const links = await linkService.getAllLinks(ctx.userEmail);
+		if (links.isErr) {
+			console.error('Router error:', links.error);
 			throw new TRPCError({
-				code: err.statusCode,
-				message: err.message,
-				cause: err,
+				code: links.error.statusCode,
+				message: links.error.message,
+				cause: links.error,
 			});
 		}
 
-		return links;
+		return links.value;
 	}),
 
 	getLinkBySlug: t.procedure.input(getLinkSchema).query(async ({ input }) => {
-		const { slug } = input;
-
-		const [link, err] = await linkService.getLinkBySlug(slug);
-		if (err instanceof BaseError) {
+		const link = await linkService.getLinkBySlug(input.slug);
+		if (link.isErr) {
 			throw new TRPCError({
-				code: err.statusCode,
-				message: err.message,
-				cause: err,
+				code: link.error.statusCode,
+				message: link.error.message,
+				cause: link.error,
 			});
 		}
 
-		return link as Link;
+		return link.value;
 	}),
 
 	createLink: t.procedure.input(linkSchema).mutation(async ({ input, ctx }) => {
 		const { link, customName } = input;
 		const { session } = ctx;
 
-		const [addedLink, err] = await linkService.createLink({
+		const addedLink = await linkService.createLink({
 			link,
 			slug: customName,
 			email: session?.user?.email,
 		});
-		if (err instanceof BaseError) {
+		if (addedLink.isErr) {
 			throw new TRPCError({
-				code: err.statusCode,
-				message: err.message,
-				cause: err,
+				code: addedLink.error.statusCode,
+				message: addedLink.error.message,
+				cause: addedLink.error,
 			});
 		}
 
-		return addedLink as Link;
+		return addedLink.value;
 	}),
 
 	updateLink: t.procedure
@@ -74,11 +71,11 @@ export const router = t.router({
 			const { userEmail } = ctx;
 
 			const err = await linkService.updateLinkBySlug(oldSlug, customName, userEmail);
-			if (err instanceof BaseError) {
+			if (err.isJust) {
 				throw new TRPCError({
-					code: err.statusCode,
-					message: err.message,
-					cause: err,
+					code: err.value.statusCode,
+					message: err.value.message,
+					cause: err.value,
 				});
 			}
 		}),
@@ -91,15 +88,25 @@ export const router = t.router({
 			const { userEmail } = ctx;
 
 			const err = await linkService.deleteLinkBySlug(slug, userEmail);
-			if (err instanceof BaseError)
+			if (err.isJust)
 				throw new TRPCError({
-					code: err.statusCode,
-					message: err.message,
-					cause: err,
+					code: err.value.statusCode,
+					message: err.value.message,
+					cause: err.value,
 				});
-
-			return true;
 		}),
+
+	redirect: t.procedure.input(getLinkSchema).mutation(async ({ input }) => {
+		const link = await linkService.redirect(input.slug);
+		if (link.isErr)
+			throw new TRPCError({
+				code: link.error.statusCode,
+				message: link.error.message,
+				cause: link.error,
+			});
+
+		return link.value;
+	}),
 });
 
 export type Router = typeof router;

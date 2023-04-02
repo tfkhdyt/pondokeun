@@ -40,6 +40,9 @@ dependencies:
   trpc-sveltekit:
     specifier: ^3.5.2
     version: 3.5.2(@sveltejs/adapter-node@1.2.3)(@trpc/client@10.18.0)(@trpc/server@10.18.0)(@types/ws@8.5.4)(ws@8.13.0)
+  true-myth:
+    specifier: ^6.2.0
+    version: 6.2.0
 
 devDependencies:
   '@sveltejs/adapter-auto':
@@ -2911,6 +2914,11 @@ packages:
       '@trpc/server': 10.18.0
       '@types/ws': 8.5.4
       ws: 8.13.0
+    dev: false
+
+  /true-myth@6.2.0:
+    resolution: {integrity: sha512-NYvzj/h2mGXmdIBmz825c/lQhpI4bzUQEEiBCAbNOVpr6aeYa1WTpJ+OmGmj1yPqbTLPKCCSi54yDnaEup504Q==}
+    engines: {node: 14.* || 16.* || >= 18.*}
     dev: false
 
   /ts-interface-checker@0.1.13:

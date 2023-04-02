@@ -1,12 +1,12 @@
 <script lang="ts">
 	import autoAnimate from '@formkit/auto-animate';
-	import type { Link } from '@prisma/client';
 	import { TRPCClientError } from '@trpc/client';
 	import { Button, ButtonGroup, FloatingLabelInput, Input, Select, Toggle } from 'flowbite-svelte';
 	import toast from 'svelte-french-toast';
 
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import type { LinkWithVisitorsNumber } from '$entities/link.entity';
 	import CTA from '$lib/components/CTA.svelte';
 	import SingleResult from '$lib/components/SingleResult.svelte';
 	import { trpc } from '$lib/trpc/client';
@@ -46,11 +46,11 @@
 			} else {
 				return b.updatedAt.getTime() - a.updatedAt.getTime();
 			}
-		}) as Link[];
+		}) as LinkWithVisitorsNumber[];
 
 	let link: string;
 	let customName: string;
-	let addedLink: Link;
+	let addedLink: LinkWithVisitorsNumber;
 
 	const handleCreateLink = async () => {
 		try {
@@ -110,6 +110,7 @@
 			<SingleResult
 				slug={addedLink.slug}
 				link={addedLink.link}
+				visitorsNumber={addedLink.visitorsNumber?.value}
 				createdDate={addedLink.createdAt}
 				updatedDate={addedLink.updatedAt} />
 		{:else if $page.data.session && data.links && data.links.length > 0}
@@ -137,6 +138,7 @@
 					<SingleResult
 						slug={link.slug}
 						link={link.link}
+						visitorsNumber={link.visitorsNumber?.value}
 						createdDate={link.createdAt}
 						updatedDate={link.updatedAt} />
 				{/each}

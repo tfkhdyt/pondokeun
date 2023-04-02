@@ -1,38 +1,46 @@
 import type { Link, Prisma } from '@prisma/client';
 import { inject, injectable } from 'inversify';
+import { Maybe, Result } from 'true-myth';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
+import type { LinkWithVisitorsNumber } from '$entities/link.entity';
 import BadRequestError from '$exceptions/BadRequestError';
-import BaseError from '$exceptions/BaseError';
+import type BaseError from '$exceptions/BaseError';
 import UnauthenticatedError from '$exceptions/UnauthenticatedError';
-import type { LinkRepository } from '$repositories';
+import type { LinkRepository, VisitorsNumberRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
 
 export interface ILinkService {
-	createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]>;
-	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
-	getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]>;
-	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<BaseError | null>;
-	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
+	createLink(payload: CreateLinkRequest): Promise<Result<LinkWithVisitorsNumber, BaseError>>;
+	getAllLinks(email: string): Promise<Result<LinkWithVisitorsNumber[], BaseError>>;
+	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>>;
+	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Maybe<BaseError>>;
+	deleteLinkBySlug(slug: string, email: string): Promise<Maybe<BaseError>>;
+	redirect(slug: string): Promise<Result<string, BaseError>>;
 }
 
 @injectable()
 export default class LinkService implements ILinkService {
 	private linkRepo: LinkRepository;
+	private visitorsNumberRepo: VisitorsNumberRepository;
 
-	constructor(@inject(TYPES.LinkRepository) linkRepo: LinkRepository) {
+	constructor(
+		@inject(TYPES.LinkRepository) linkRepo: LinkRepository,
+		@inject(TYPES.VisitorsNumberRepository) visitorsNumberRepo: VisitorsNumberRepository
+	) {
 		this.linkRepo = linkRepo;
+		this.visitorsNumberRepo = visitorsNumberRepo;
 	}
 
-	async createLink(payload: CreateLinkRequest): Promise<[Link | null, BaseError | null]> {
+	async createLink(payload: CreateLinkRequest): Promise<Result<LinkWithVisitorsNumber, BaseError>> {
 		if (payload.slug) {
 			if (!payload.email) {
-				throw new UnauthenticatedError('You should sign in first');
+				return Result.err(new UnauthenticatedError('You should sign in first'));
 			}
 
 			const err = await this.linkRepo.verifySlugAvailability(payload.slug);
-			if (err instanceof BaseError) {
-				return [null, err];
+			if (err.isJust) {
+				return Result.err(err.value);
 			}
 		}
 
@@ -51,22 +59,27 @@ export default class LinkService implements ILinkService {
 						email: payload.email,
 					},
 				},
+				visitorsNumber: {
+					create: {
+						value: 0,
+					},
+				},
 			};
 		}
 
-		const [addedLink, err] = await this.linkRepo.createLink(newLink);
-		if (err) {
-			return [addedLink, err];
+		const addedLink = await this.linkRepo.createLink(newLink);
+		if (addedLink.isErr) {
+			return Result.err(addedLink.error);
 		}
 
-		return [addedLink, null];
+		return Result.ok(addedLink.value);
 	}
 
-	async getAllLinks(email: string): Promise<[Link[], BaseError | null]> {
+	getAllLinks(email: string): Promise<Result<LinkWithVisitorsNumber[], BaseError>> {
 		return this.linkRepo.getAllLinks(email);
 	}
 
-	async getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]> {
+	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>> {
 		return this.linkRepo.getLinkBySlug(slug);
 	}
 
@@ -74,28 +87,41 @@ export default class LinkService implements ILinkService {
 		oldSlug: string,
 		newSlug: string,
 		email: string
-	): Promise<BaseError | null> {
+	): Promise<Maybe<BaseError>> {
+		const link = await this.linkRepo.getLinkBySlug(oldSlug);
+		if (link.isErr) {
+			return Maybe.just(link.error);
+		}
+
 		let err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
-		if (err instanceof BaseError) return err;
+		if (err.isJust) return err;
 
 		if (oldSlug === newSlug) {
-			return new BadRequestError('Old slug and new slug must be different');
+			return Maybe.just(new BadRequestError('Old slug and new slug must be different'));
 		}
 
 		err = await this.linkRepo.verifySlugAvailability(newSlug);
-		if (err instanceof BaseError) return err;
+		if (err.isJust) return err;
 
 		return this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
 	}
 
-	async deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null> {
-		let err = this.linkRepo.verifySlugOwnership(slug, email);
-		if (err instanceof BaseError) {
+	async deleteLinkBySlug(slug: string, email: string): Promise<Maybe<BaseError>> {
+		const err = await this.linkRepo.verifySlugOwnership(slug, email);
+		if (err.isJust) {
 			return err;
 		}
 
-		err = this.linkRepo.deleteLinkBySlug(slug);
+		return this.linkRepo.deleteLinkBySlug(slug);
+	}
 
-		return err;
+	async redirect(slug: string): Promise<Result<string, BaseError>> {
+		const link = await this.linkRepo.getLinkBySlug(slug);
+		if (link.isErr) return Result.err(link.error);
+
+		const err = await this.visitorsNumberRepo.increment(link.value.id);
+		if (err.isJust) return Result.err(err.value);
+
+		return Result.ok(link.value.link);
 	}
 }

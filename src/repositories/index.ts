@@ -1,13 +1,19 @@
 import type { Link, Prisma } from '@prisma/client';
+import type { Maybe, Result } from 'true-myth';
 
+import type { LinkWithVisitorsNumber } from '$entities/link.entity';
 import type BaseError from '$exceptions/BaseError';
 
 export interface LinkRepository {
-	createLink(payload: Prisma.LinkCreateInput): Promise<[Link, BaseError | null]>;
-	verifySlugAvailability(slug: string): Promise<BaseError | null>;
-	verifySlugOwnership(slug: string, email: string): Promise<BaseError | null>;
-	getAllLinks(email: string): Promise<[Link[], BaseError | null]>;
-	getLinkBySlug(slug: string): Promise<[Link | null, BaseError | null]>;
-	updateLinkBySlug(oldSlug: string, newSlug: string): Promise<BaseError | null>;
-	deleteLinkBySlug(slug: string): Promise<BaseError | null>;
+	createLink(payload: Prisma.LinkCreateInput): Promise<Result<LinkWithVisitorsNumber, BaseError>>;
+	verifySlugAvailability(slug: string): Promise<Maybe<BaseError>>;
+	verifySlugOwnership(slug: string, email: string): Promise<Maybe<BaseError>>;
+	getAllLinks(email: string): Promise<Result<LinkWithVisitorsNumber[], BaseError>>;
+	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>>;
+	updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Maybe<BaseError>>;
+	deleteLinkBySlug(slug: string): Promise<Maybe<BaseError>>;
+}
+
+export interface VisitorsNumberRepository {
+	increment(linkId: number): Promise<Maybe<BaseError>>;
 }
