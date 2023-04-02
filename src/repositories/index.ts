@@ -10,5 +10,5 @@ export interface LinkRepository {
 	getAllLinks(email: string): Promise<Result<Link[], BaseError>>;
 	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>>;
 	updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Maybe<BaseError>>;
-	deleteLinkBySlug(slug: string): Promise<BaseError | null>;
+	deleteLinkBySlug(slug: string): Promise<Maybe<BaseError>>;
 }

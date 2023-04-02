@@ -4,7 +4,7 @@ import { Maybe, Result } from 'true-myth';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
 import BadRequestError from '$exceptions/BadRequestError';
-import BaseError from '$exceptions/BaseError';
+import type BaseError from '$exceptions/BaseError';
 import UnauthenticatedError from '$exceptions/UnauthenticatedError';
 import type { LinkRepository } from '$repositories';
 import { TYPES } from '$types/inversify.type';
@@ -14,7 +14,7 @@ export interface ILinkService {
 	getAllLinks(email: string): Promise<Result<Link[], BaseError>>;
 	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>>;
 	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Maybe<BaseError>>;
-	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
+	deleteLinkBySlug(slug: string, email: string): Promise<Maybe<BaseError>>;
 }
 
 @injectable()
@@ -94,14 +94,12 @@ export default class LinkService implements ILinkService {
 		return this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
 	}
 
-	async deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null> {
-		let err = this.linkRepo.verifySlugOwnership(slug, email);
-		if (err instanceof BaseError) {
+	async deleteLinkBySlug(slug: string, email: string): Promise<Maybe<BaseError>> {
+		const err = await this.linkRepo.verifySlugOwnership(slug, email);
+		if (err.isJust) {
 			return err;
 		}
 
-		err = this.linkRepo.deleteLinkBySlug(slug);
-
-		return err;
+		return this.linkRepo.deleteLinkBySlug(slug);
 	}
 }

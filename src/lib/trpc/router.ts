@@ -7,7 +7,6 @@ import {
 	linkSchema,
 	updateLinkSchema,
 } from '$entities/link.entity';
-import BaseError from '$exceptions/BaseError';
 import type { ILinkService } from '$services/link.service';
 import { TYPES } from '$types/inversify.type';
 
@@ -88,14 +87,12 @@ export const router = t.router({
 			const { userEmail } = ctx;
 
 			const err = await linkService.deleteLinkBySlug(slug, userEmail);
-			if (err instanceof BaseError)
+			if (err.isJust)
 				throw new TRPCError({
-					code: err.statusCode,
-					message: err.message,
-					cause: err,
+					code: err.value.statusCode,
+					message: err.value.message,
+					cause: err.value,
 				});
-
-			return true;
 		}),
 });
 
