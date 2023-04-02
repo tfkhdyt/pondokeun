@@ -35,12 +35,12 @@
 			</div>
 			<A class="font-bold" href={completeUrl} target="_blank" aClass="text-right">/{slug}</A>
 		</div>
-		<div class="flex gap-1 items-center w-full md:w-auto justify-stretch">
+		<div class="flex items-center w-full md:w-auto justify-stretch">
 			<Button
 				on:click={() => navigator.clipboard.writeText(completeUrl)}
 				id={`copy-button-${slug}`}
 				color="light"
-				class="w-full md:w-auto"
+				class="w-full rounded-none rounded-l-lg md:w-auto"
 				type="button">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +60,7 @@
 				disabled={!$page.data.session?.user}
 				href={`/${slug}/edit`}
 				color="light"
-				class="w-full md:w-auto">
+				class="w-full rounded-none border-0 border-t border-b md:w-auto">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -75,10 +75,10 @@
 				</svg>
 			</Button>
 			<Button
-				color="red"
+				color="light"
 				on:click={() => (popupModal = true)}
 				disabled={!$page.data.session?.user}
-				class="w-full md:w-auto">
+				class="w-full rounded-none rounded-r-lg transition md:w-auto hover:text-white hover:bg-red-600 hover:border-red-500">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
