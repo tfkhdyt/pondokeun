@@ -22,18 +22,18 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 	async createLink(
 		payload: Prisma.LinkCreateInput
 	): Promise<Result<LinkWithVisitorsNumber, BaseError>> {
-		const addedLink = await this.db.link.create({
-			data: payload,
-			include: {
-				visitorsNumber: true,
-			},
-		});
-
-		if (!addedLink) {
+		try {
+			const addedLink = await this.db.link.create({
+				data: payload,
+				include: {
+					visitorsNumber: true,
+				},
+			});
+			return Result.ok(addedLink);
+		} catch (error) {
+			console.error({ error });
 			return Result.err(new InternalServerError('Failed to create new link'));
 		}
-
-		return Result.ok(addedLink);
 	}
 
 	async verifySlugAvailability(slug: string): Promise<Maybe<BaseError>> {
@@ -104,20 +104,20 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 	}
 
 	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Maybe<BaseError>> {
-		const updatedLink = await this.db.link.update({
-			where: {
-				slug: oldSlug,
-			},
-			data: {
-				slug: newSlug,
-			},
-		});
-
-		if (!updatedLink) {
+		try {
+			await this.db.link.update({
+				where: {
+					slug: oldSlug,
+				},
+				data: {
+					slug: newSlug,
+				},
+			});
+			return Maybe.nothing();
+		} catch (error) {
+			console.error({ error });
 			return Maybe.just(new InternalServerError(`Failed to update /${oldSlug}`));
 		}
-
-		return Maybe.nothing();
 	}
 
 	async deleteLinkBySlug(slug: string): Promise<Maybe<BaseError>> {
@@ -129,6 +129,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 			});
 			return Maybe.nothing();
 		} catch (error) {
+			console.error({ error });
 			return Maybe.just(new InternalServerError(`Failed to delete /${slug}`));
 		}
 	}

@@ -16,29 +16,29 @@ export default class VisitorsNumberPostgresRepository implements VisitorsNumberR
 	}
 
 	async increment(linkId: number): Promise<Maybe<BaseError>> {
-		const incrementedLink = await this.db.visitorsNumber.upsert({
-			where: {
-				linkId,
-			},
-			create: {
-				value: 1,
-				link: {
-					connect: {
-						id: linkId,
+		try {
+			await this.db.visitorsNumber.upsert({
+				where: {
+					linkId,
+				},
+				create: {
+					value: 1,
+					link: {
+						connect: {
+							id: linkId,
+						},
 					},
 				},
-			},
-			update: {
-				value: {
-					increment: 1,
+				update: {
+					value: {
+						increment: 1,
+					},
 				},
-			},
-		});
-
-		if (!incrementedLink) {
+			});
+			return Maybe.nothing();
+		} catch (error) {
+			console.error({ error });
 			return Maybe.just(new InternalServerError('Failed to increment visitors number'));
 		}
-
-		return Maybe.nothing();
 	}
 }
