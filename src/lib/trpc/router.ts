@@ -71,11 +71,11 @@ export const router = t.router({
 			const { userEmail } = ctx;
 
 			const err = await linkService.updateLinkBySlug(oldSlug, customName, userEmail);
-			if (err instanceof BaseError) {
+			if (err.isJust) {
 				throw new TRPCError({
-					code: err.statusCode,
-					message: err.message,
-					cause: err,
+					code: err.value.statusCode,
+					message: err.value.message,
+					cause: err.value,
 				});
 			}
 		}),

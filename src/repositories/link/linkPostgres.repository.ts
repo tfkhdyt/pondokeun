@@ -44,7 +44,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return Maybe.nothing();
 	}
 
-	async verifySlugOwnership(slug: string, email: string): Promise<BaseError | null> {
+	async verifySlugOwnership(slug: string, email: string): Promise<Maybe<BaseError>> {
 		const link = await this.db.link.findFirst({
 			where: {
 				slug,
@@ -55,10 +55,10 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!link) {
-			return new UnauthorizedError("You don't have access to this resource");
+			return Maybe.just(new UnauthorizedError("You don't have access to this resource"));
 		}
 
-		return null;
+		return Maybe.nothing();
 	}
 
 	async getAllLinks(email: string): Promise<Result<Link[], BaseError>> {
@@ -93,7 +93,7 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		return Result.ok(link);
 	}
 
-	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<BaseError | null> {
+	async updateLinkBySlug(oldSlug: string, newSlug: string): Promise<Maybe<BaseError>> {
 		const updatedLink = await this.db.link.update({
 			where: {
 				slug: oldSlug,
@@ -104,10 +104,10 @@ export default class LinkRepositoryPostgres implements LinkRepository {
 		});
 
 		if (!updatedLink) {
-			return new InternalServerError(`Failed to update /${oldSlug}`);
+			return Maybe.just(new InternalServerError(`Failed to update /${oldSlug}`));
 		}
 
-		return null;
+		return Maybe.nothing();
 	}
 
 	async deleteLinkBySlug(slug: string): Promise<BaseError | null> {

@@ -1,6 +1,6 @@
 import type { Link, Prisma } from '@prisma/client';
 import { inject, injectable } from 'inversify';
-import { Result } from 'true-myth';
+import { Maybe, Result } from 'true-myth';
 
 import type { CreateLinkRequest } from '$dto/link.dto';
 import BadRequestError from '$exceptions/BadRequestError';
@@ -13,7 +13,7 @@ export interface ILinkService {
 	createLink(payload: CreateLinkRequest): Promise<Result<Link, BaseError>>;
 	getAllLinks(email: string): Promise<Result<Link[], BaseError>>;
 	getLinkBySlug(slug: string): Promise<Result<Link, BaseError>>;
-	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<BaseError | null>;
+	updateLinkBySlug(oldSlug: string, newSlug: string, email: string): Promise<Maybe<BaseError>>;
 	deleteLinkBySlug(slug: string, email: string): Promise<BaseError | null>;
 }
 
@@ -75,16 +75,21 @@ export default class LinkService implements ILinkService {
 		oldSlug: string,
 		newSlug: string,
 		email: string
-	): Promise<BaseError | null> {
+	): Promise<Maybe<BaseError>> {
+		const link = await this.linkRepo.getLinkBySlug(oldSlug);
+		if (link.isErr) {
+			return Maybe.just(link.error);
+		}
+
 		let err = await this.linkRepo.verifySlugOwnership(oldSlug, email);
-		if (err instanceof BaseError) return err;
+		if (err.isJust) return err;
 
 		if (oldSlug === newSlug) {
-			return new BadRequestError('Old slug and new slug must be different');
+			return Maybe.just(new BadRequestError('Old slug and new slug must be different'));
 		}
 
 		err = await this.linkRepo.verifySlugAvailability(newSlug);
-		if (err instanceof BaseError) return err;
+		if (err.isJust) return err;
 
 		return this.linkRepo.updateLinkBySlug(oldSlug, newSlug);
 	}
