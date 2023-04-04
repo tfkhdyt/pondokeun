@@ -116,7 +116,7 @@
 			<SingleResult
 				slug={addedLink.slug}
 				link={addedLink.link}
-				visitorsNumber={addedLink.visitorsNumber?.value}
+				visitorsNumber={addedLink.visitorsNumber?.value ?? 0}
 				createdDate={addedLink.createdAt}
 				updatedDate={addedLink.updatedAt} />
 		{:else if $page.data.session && data.links && data.links.length > 0}
@@ -144,7 +144,7 @@
 					<SingleResult
 						slug={link.slug}
 						link={link.link}
-						visitorsNumber={link.visitorsNumber?.value}
+						visitorsNumber={link.visitorsNumber?.value ?? 0}
 						createdDate={link.createdAt}
 						updatedDate={link.updatedAt} />
 				{/each}
