@@ -60,8 +60,9 @@
 			customName = '';
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
-				const errors = JSON.parse(error.message) as { message: string }[];
-				if (Array.isArray(errors)) {
+				console.error(error.message);
+				if (Array.isArray(error.message)) {
+					const errors = JSON.parse(error.message) as { message: string }[];
 					for (const err of errors) {
 						return toast.error(err.message, { position: 'top-right' });
 					}
