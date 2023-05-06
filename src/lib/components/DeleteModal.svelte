@@ -17,8 +17,8 @@
 			toast.success(`/${slug} has been deleted successfully`, { position: 'top-right' });
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
-				const errors = JSON.parse(error.message) as { message: string }[];
-				if (Array.isArray(errors)) {
+				if (Array.isArray(error.message)) {
+					const errors = JSON.parse(error.message) as { message: string }[];
 					for (const err of errors) {
 						return toast.error(err.message, { position: 'top-right' });
 					}

@@ -60,7 +60,6 @@
 			customName = '';
 		} catch (error) {
 			if (error instanceof TRPCClientError) {
-				console.error(error.message);
 				if (Array.isArray(error.message)) {
 					const errors = JSON.parse(error.message) as { message: string }[];
 					for (const err of errors) {
